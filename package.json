@@ -1,0 +1,27 @@
+{
+  "name": "books-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "pm2 start src/app.js --name books-api",
+    "stop": "pm2 stop books-api",
+    "restart": "pm2 restart books-api",
+    "delete": "pm2 delete books-api",
+    "logs": "pm2 logs books-api",
+    "list": "pm2 list",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "mycodetherapy",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "pm2": "^5.4.3",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
