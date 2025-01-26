@@ -2,9 +2,12 @@ import express from 'express';
 import booksRouter from './routes/books.js';
 import fs from 'fs';
 import path from 'path';
+import { logger } from './middleware/logger.js';
 
 const app = express();
 const PORT = 3000;
+
+app.use(logger);
 
 app.use(express.json());
 
