@@ -107,15 +107,3 @@ export const deleteBook = (req, res) => {
 
   res.send('ok');
 };
-
-// export const deleteBook = (req, res) => {
-//   const { id } = req.params;
-//   const bookIndex = store.books.findIndex((book) => book.id === id);
-
-//   if (bookIndex === -1) {
-//     return res.status(404).send('Book not found');
-//   }
-
-//   store.books.splice(bookIndex, 1);
-//   res.send('ok');
-// };
