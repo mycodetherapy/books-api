@@ -18,7 +18,5 @@ export const logger = (req, res, next) => {
 
   fs.appendFileSync(logFilePath, logEntry, 'utf8');
 
-  console.log(logEntry.trim());
-
   next();
 };
