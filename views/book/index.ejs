@@ -1,4 +1,6 @@
-<%- include('../partials/layout-start') %>
+<%- include('../partials/layout-start') %> <% if (message) { %>
+<div id="success-message" class="alert alert-success"><%= message %></div>
+<% } %>
 
 <div class="container book-container">
   <h1>Book List</h1>
@@ -11,5 +13,16 @@
     <% }) %>
   </ul>
 </div>
+
+<script>
+  setTimeout(() => {
+    const messageElement = document.getElementById('success-message');
+    if (messageElement) {
+      messageElement.style.display = 'none';
+      const newUrl = window.location.href.split('?')[0];
+      window.history.replaceState(null, null, newUrl);
+    }
+  }, 3000);
+</script>
 
 <%- include('../partials/layout-end') %>

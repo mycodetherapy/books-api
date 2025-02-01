@@ -10,7 +10,11 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
   try {
     const { books } = store;
-    res.render('book/index', { title: 'Books', books });
+    res.render('book/index', {
+      title: 'Books',
+      books,
+      message: req.query.message,
+    });
   } catch (err) {
     next(err);
   }
@@ -125,7 +129,7 @@ router.post('/delete/:id', async (req, res, next) => {
     }
 
     books.splice(index, 1);
-    res.redirect('/books');
+    res.redirect('/books?message=The book has been successfully deleted!');
   } catch (err) {
     next(err);
   }
