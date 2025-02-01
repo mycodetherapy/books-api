@@ -16,7 +16,7 @@ export class Book {
     this.description = description;
     this.authors = authors;
     this.favorite = favorite;
-    this.fileCover = fileCover;
+    this.fileCover = fileCover || filePath;
     this.fileName = fileName;
     this.filePath = filePath;
   }

@@ -1,5 +1,6 @@
 <%- include('../partials/layout-start') %>
-<div class="container">
+
+<div class="container-sm book-form-container">
   <h1>Edit Book</h1>
   <form
     action="/books/update/<%= book.id %>"
@@ -17,6 +18,7 @@
         required
       />
     </div>
+
     <div class="mb-3">
       <label for="authors" class="form-label">Author</label>
       <input
@@ -28,14 +30,15 @@
         required
       />
     </div>
+
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>
       <textarea id="description" name="description" class="form-control">
-        <%= book.description %></textarea
+        <%=book.description%></textarea
       >
     </div>
+
     <div class="mb-3">
-      <label for="file">Upload File</label>
       <input type="file" id="file" name="file" onchange="previewImage(event)" />
     </div>
 
@@ -43,28 +46,29 @@
       id="preview"
       src="<%= book.filePath || '' %>"
       alt="Preview"
-      style="max-width: 200px; margin-top: 10px; display: <%= book.filePath ? 'block' : 'none' %>;"
+      class="preview-image"
     />
 
-    <script>
-      function previewImage(event) {
-        const input = event.target;
-        const preview = document.getElementById('preview');
-
-        if (input.files && input.files[0]) {
-          const reader = new FileReader();
-
-          reader.onload = function (e) {
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-          };
-
-          reader.readAsDataURL(input.files[0]);
-        }
-      }
-    </script>
-
-    <button type="submit" class="btn btn-success">Update</button>
+    <button type="submit" class="btn btn-success submit-button">Update</button>
   </form>
 </div>
+
 <%- include('../partials/layout-end') %>
+
+<script>
+  function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('preview');
+
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>

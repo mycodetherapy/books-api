@@ -13,8 +13,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/create', (req, res) => {
-  console.log('req.file', req.body);
-
   const fieldLabels = {
     title: 'Title',
     authors: 'Authors Names',
@@ -25,8 +23,6 @@ router.get('/create', (req, res) => {
 
 router.post('/create', upload.single('file'), (req, res) => {
   const filePath = req.file ? `/uploads/${req.file.filename}` : null;
-  console.log('filePath', req.file);
-
   const { title, description, authors, favorite, fileCover, fileName } =
     req.body;
   const newBook = new Book(
@@ -48,8 +44,6 @@ router.get('/:id', (req, res) => {
   if (!book) {
     return res.redirect('/404');
   }
-  console.log('book wiew', book);
-
   res.render('book/view', { title: 'View Book', book });
 });
 
@@ -82,7 +76,7 @@ router.post('/update/:id', upload.single('file'), async (req, res) => {
 
   book.title = title;
   book.authors = authors;
-  book.description = description;
+  book.description = description.trim();
 
   res.redirect(`/books/${req.params.id}`);
 });
