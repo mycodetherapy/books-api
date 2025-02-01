@@ -1,31 +1,10 @@
-// import express from 'express';
-// import booksRouter from './routes/books.js';
-// import bodyParser from 'body-parser';
-// import path from 'path';
-
-// const app = express();
-
-// app.set('view engine', 'ejs');
-
-// // Роуты
-// app.use('/books', booksRouter);
-
-// // 404
-// app.use((req, res) => {
-//   res.status(404).send('Page not found');
-// });
-
-// const PORT = 3000;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on http://localhost:${PORT}`);
-// });
-
 import express from 'express';
 import booksRouter from './routes/books.js';
 import fs from 'fs';
 import path from 'path';
 import { logger } from './middleware/logger.js';
 import { notFound } from './middleware/error-404.js';
+import { errorHandler } from './middleware/error-500.js';
 
 const app = express();
 const PORT = 3000;
@@ -52,6 +31,7 @@ app.use('/uploads', express.static(uploadDir));
 app.use('/books', booksRouter);
 
 app.use(notFound);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
