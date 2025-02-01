@@ -1,6 +1,6 @@
 <%- include('../partials/layout-start') %>
 
-<div class="container-sm book-form-container">
+<div class="container-sm book-container">
   <h1>Edit Book</h1>
   <form
     action="/books/update/<%= book.id %>"
@@ -29,6 +29,13 @@
         value="<%= book.authors %>"
         required
       />
+    </div>
+
+    <div class="mb-3 form-check">
+      <input type="checkbox" id="favorite" name="favorite"
+      class="form-check-input" <%= book.favorite ? "checked" : "" %>
+      value="true" />
+      <label for="favorite" class="form-check-label">Favorite</label>
     </div>
 
     <div class="mb-3">

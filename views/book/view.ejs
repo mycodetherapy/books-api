@@ -1,8 +1,9 @@
 <%- include('../partials/layout-start') %>
 <div class="container-sm book-container">
   <h1><%= book.title %></h1>
-  <p><strong>Author:</strong> <%= book.authors %></p>
+  <p><strong>Authors:</strong> <%= book.authors %></p>
   <p><strong>Description:</strong> <%= book.description %></p>
+  <p><strong>Favorite:</strong> <%= book.favorite %></p>
   <% if (book.filePath) { %>
   <img
     src="<%= book.filePath %>"

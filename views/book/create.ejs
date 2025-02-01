@@ -1,6 +1,6 @@
 <%- include('../partials/layout-start') %>
 
-<div class="container-sm book-form-container">
+<div class="container-sm book-container">
   <h1>Create Book</h1>
   <form action="/books/create" method="POST" enctype="multipart/form-data">
     <div class="mb-3">
@@ -23,6 +23,24 @@
         class="form-control"
         required
       />
+    </div>
+    <div class="mb-3">
+      <label for="fileName" class="form-label"
+        ><%= fieldLabels.fileName %></label
+      >
+      <input type="text" id="fileName" name="fileName" class="form-control" />
+    </div>
+    <div class="mb-3 form-check">
+      <input
+        type="checkbox"
+        id="favorite"
+        name="favorite"
+        class="form-check-input"
+        value="true"
+      />
+      <label for="favorite" class="form-check-label"
+        ><%= fieldLabels.favorite %></label
+      >
     </div>
 
     <div class="mb-3">

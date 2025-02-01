@@ -4,6 +4,7 @@ import { Book } from '../models/book.js';
 import { store } from '../store/store.js';
 import path from 'path';
 import { unlink } from 'fs/promises';
+import { trimStrings } from '../helpers.js';
 
 const router = express.Router();
 
@@ -24,8 +25,10 @@ router.get('/create', (req, res, next) => {
   try {
     const fieldLabels = {
       title: 'Title',
-      authors: 'Authors Names',
-      description: 'Book Description',
+      authors: 'Authors',
+      description: 'Description',
+      favorite: 'Favorite',
+      fileName: 'File name',
     };
     res.render('book/create', { title: 'Create Book', book: {}, fieldLabels });
   } catch (err) {
@@ -36,8 +39,10 @@ router.get('/create', (req, res, next) => {
 router.post('/create', upload.single('file'), async (req, res, next) => {
   try {
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
-    const { title, description, authors, favorite, fileCover, fileName } =
-      req.body;
+    const { title, description, authors, fileCover, fileName } = trimStrings(
+      req.body
+    );
+    const favorite = req.body.favorite === 'true';
     const newBook = new Book(
       title,
       description,
@@ -47,6 +52,7 @@ router.post('/create', upload.single('file'), async (req, res, next) => {
       fileName,
       filePath
     );
+
     store.books.push(newBook);
     res.redirect('/books');
   } catch (err) {
@@ -83,7 +89,9 @@ router.get('/update/:id', (req, res, next) => {
 router.post('/update/:id', upload.single('file'), async (req, res, next) => {
   try {
     const { books } = store;
-    const { title, authors, description } = req.body;
+    const { title, authors, description, fileName, favorite } = trimStrings(
+      req.body
+    );
     const book = books.find((b) => b.id === req.params.id);
 
     if (!book) {
@@ -101,7 +109,9 @@ router.post('/update/:id', upload.single('file'), async (req, res, next) => {
 
     book.title = title;
     book.authors = authors;
-    book.description = description.trim();
+    book.description = description || book.description;
+    book.fileName = fileName || book.fileName;
+    book.favorite = favorite === 'true';
 
     res.redirect(`/books/${req.params.id}`);
   } catch (err) {
