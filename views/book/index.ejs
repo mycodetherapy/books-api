@@ -1,0 +1,13 @@
+<%- include('../partials/layout-start') %>
+<div class="container">
+  <h1>Book List</h1>
+  <a href="/books/create" class="btn btn-primary mb-3">Add Book</a>
+  <ul class="list-group">
+    <% books.forEach(book => { %>
+    <li class="list-group-item">
+      <a href="/books/<%= book.id %>"><%= book.title %></a>
+    </li>
+    <% }) %>
+  </ul>
+</div>
+<%- include('../partials/layout-end') %>

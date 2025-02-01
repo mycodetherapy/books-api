@@ -1,0 +1,70 @@
+<%- include('../partials/layout-start') %>
+<div class="container">
+  <h1>Edit Book</h1>
+  <form
+    action="/books/update/<%= book.id %>"
+    method="POST"
+    enctype="multipart/form-data"
+  >
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        class="form-control"
+        value="<%= book.title %>"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="authors" class="form-label">Author</label>
+      <input
+        type="text"
+        id="authors"
+        name="authors"
+        class="form-control"
+        value="<%= book.authors %>"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" name="description" class="form-control">
+        <%= book.description %></textarea
+      >
+    </div>
+    <div class="mb-3">
+      <label for="file">Upload File</label>
+      <input type="file" id="file" name="file" onchange="previewImage(event)" />
+    </div>
+
+    <img
+      id="preview"
+      src="<%= book.filePath || '' %>"
+      alt="Preview"
+      style="max-width: 200px; margin-top: 10px; display: <%= book.filePath ? 'block' : 'none' %>;"
+    />
+
+    <script>
+      function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+          };
+
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+    </script>
+
+    <button type="submit" class="btn btn-success">Update</button>
+  </form>
+</div>
+<%- include('../partials/layout-end') %>

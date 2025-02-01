@@ -1,0 +1,81 @@
+<%- include('../partials/layout-start') %>
+<div class="container-sm">
+  <h1>Create Book</h1>
+  <form action="/books/create" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="title" class="form-label"><%= fieldLabels.title %></label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        class="form-control"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="authors" class="form-label"><%= fieldLabels.authors %></label>
+      <input
+        type="text"
+        id="authors"
+        name="authors"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label"
+        ><%= fieldLabels.description %></label
+      >
+      <textarea
+        id="description"
+        name="description"
+        class="form-control"
+      ></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="file">Upload File</label>
+      <input
+        type="file"
+        id="file"
+        name="file"
+        required
+        onchange="previewImage(event)"
+      />
+    </div>
+    <% if (book.filePath) { %>
+    <img
+      src="<%= book.filePath %>"
+      alt="Book Thumbnail"
+      style="max-width: 200px"
+    />
+    <% } %>
+    <!-- Контейнер для миниатюры -->
+    <img
+      id="preview"
+      src=""
+      alt="Preview"
+      style="max-width: 200px; display: none; margin-top: 10px"
+    />
+
+    <script>
+      function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block'; // Показываем миниатюру
+          };
+
+          reader.readAsDataURL(input.files[0]); // Читаем файл как Data URL
+        }
+      }
+    </script>
+    <button type="submit" class="btn btn-success">Create</button>
+  </form>
+</div>
+<%- include('../partials/layout-end') %>

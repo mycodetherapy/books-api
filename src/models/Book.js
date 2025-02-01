@@ -8,7 +8,7 @@ export class Book {
     favorite = false,
     fileCover = '',
     fileName = '',
-    fileBook = '',
+    filePath = '',
     id = uuid()
   ) {
     this.id = id;
@@ -18,6 +18,6 @@ export class Book {
     this.favorite = favorite;
     this.fileCover = fileCover;
     this.fileName = fileName;
-    this.fileBook = fileBook;
+    this.filePath = filePath;
   }
 }
