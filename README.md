@@ -1,4 +1,4 @@
-# This is an example of a CRUD REST api with express
+# This is an example of CRUD and server rendering using the EJS template engine.
 
 ### If you want to work with the project locally, follow these steps:
 
