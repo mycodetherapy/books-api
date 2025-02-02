@@ -67,7 +67,11 @@ router.get('/:id', (req, res, next) => {
     if (!book) {
       return res.render('errors/404');
     }
-    res.render('book/view', { title: 'View Book', book });
+    res.render('book/view', {
+      title: 'View Book',
+      book,
+      message: req.query.message,
+    });
   } catch (err) {
     next(err);
   }
@@ -113,7 +117,9 @@ router.post('/update/:id', upload.single('file'), async (req, res, next) => {
     book.fileName = fileName || book.fileName;
     book.favorite = favorite === 'true';
 
-    res.redirect(`/books/${req.params.id}`);
+    res.redirect(
+      `/books/${req.params.id}?message=The book has been successfully edited!`
+    );
   } catch (err) {
     next(err);
   }

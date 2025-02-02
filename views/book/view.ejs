@@ -1,4 +1,6 @@
-<%- include('../partials/layout-start') %>
+<%- include('../partials/layout-start') %> <% if (message) { %>
+<div id="success-message" class="alert alert-success"><%= message %></div>
+<% } %>
 <div class="container-sm book-container">
   <h1><%= book.title %></h1>
   <p><strong>Authors:</strong> <%= book.authors %></p>
