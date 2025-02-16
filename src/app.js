@@ -1,5 +1,5 @@
 import express from 'express';
-import booksRouter from './routes/books.js';
+import booksRouter from './routes/api/books.js';
 import fs from 'fs';
 import path from 'path';
 import { logger } from './middleware/logger.js';

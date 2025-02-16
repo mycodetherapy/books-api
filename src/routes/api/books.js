@@ -1,10 +1,10 @@
 import express from 'express';
-import { upload } from '../middleware/upload.js';
-import { Book } from '../models/book.js';
-import { store } from '../store/store.js';
+import { upload } from '../../middleware/upload.js';
+import { Book } from '../../models/Book.js';
+import { store } from '../../store/store.js';
 import path from 'path';
 import { unlink } from 'fs/promises';
-import { trimStrings } from '../helpers.js';
+import { trimStrings } from '../../helpers.js';
 
 const router = express.Router();
 
