@@ -1,5 +1,7 @@
-<%- include('../partials/layout-start') %> <% if (message) { %>
-<div id="success-message" class="alert alert-success"><%= message %></div>
+<%- include('../partials/layout-start') %>
+
+<% if (message) { %>
+  <div id="success-message" class="alert alert-success"><%= message %></div>
 <% } %>
 <div class="container-sm book-container">
   <h1><%= book.title %></h1>
@@ -7,23 +9,22 @@
   <p><strong>Description:</strong> <%= book.description %></p>
   <p><strong>Favorite:</strong> <%= book.favorite %></p>
   <% if (book.filePath) { %>
-  <img
-    src="<%= book.filePath %>"
-    alt="Book Thumbnail"
-    style="max-width: 200px"
-  />
+    <img
+            src="<%= book.filePath %>"
+            alt="Book Thumbnail"
+            style="max-width: 200px"
+    />
   <% } %>
+  <p><strong>Views:</strong> <%= views %></p>
   <div class="button-container">
     <a href="/books/update/<%= book.id %>" class="btn btn-warning">Edit</a>
-
     <form
-      action="/books/delete/<%= book.id %>"
-      method="POST"
-      style="display: inline"
+            action="/books/delete/<%= book.id %>"
+            method="POST"
+            style="display: inline"
     >
       <button type="submit" class="btn btn-danger">Delete</button>
     </form>
-
     <a href="/books" class="btn btn-secondary">Back to List</a>
   </div>
 </div>

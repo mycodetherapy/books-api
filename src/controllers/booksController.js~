@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import axios from "axios";
 
-const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://localhost:4000";
+const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://counter-service:4000";
 
 export const getAllBooks = (req, res) => {
     res.json(store.books);

@@ -9,8 +9,8 @@ export class Book {
     fileCover = '',
     fileName = '',
     filePath = '',
-    views = 0,
     id = uuid(),
+  views = 0,
   ) {
     this.id = id;
     this.title = title;
