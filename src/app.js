@@ -8,7 +8,7 @@ import { notFound } from './middleware/error-404.js';
 import { errorHandler } from './middleware/error-500.js';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 
@@ -35,6 +35,7 @@ app.use('/api/books', apiBooksRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(3000, '0.0.0.0', () => {
-  console.log('Server is running on http://0.0.0.0:3000');
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
+

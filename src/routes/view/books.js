@@ -8,7 +8,8 @@ import { trimStrings } from '../../helpers.js';
 import axios from "axios";
 
 const router = express.Router();
-const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://localhost:4000";
+// const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://localhost:4000";
+const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://counter-service:4000";
 
 router.get('/', async (req, res, next) => {
   try {
