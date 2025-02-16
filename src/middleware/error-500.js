@@ -1,4 +1,9 @@
 export const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
-  res.status(404).render('errors/500');
+
+  if (req.accepts('json')) {
+    res.status(500).send({ error: err.message });
+  } else {
+    res.status(500).render('errors/500');
+  }
 };

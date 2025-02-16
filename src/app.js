@@ -1,5 +1,6 @@
 import express from 'express';
-import booksRouter from './routes/api/books.js';
+import booksRouter from './routes/view/books.js';
+import apiBooksRouter from './routes/api/books.js';
 import fs from 'fs';
 import path from 'path';
 import { logger } from './middleware/logger.js';
@@ -29,6 +30,7 @@ if (!fs.existsSync(uploadDir)) {
 app.use('/uploads', express.static(uploadDir));
 
 app.use('/books', booksRouter);
+app.use('/api/books', apiBooksRouter);
 
 app.use(notFound);
 app.use(errorHandler);
