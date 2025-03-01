@@ -1,27 +1,27 @@
-# This is an example of CRUD and server rendering using the EJS template engine.
+```
+db.books.insertMany([
+  {
+    title: "Книга 1",
+    description: "Какое-то описание для книги 1.",
+    authors: "Автор 1"
+  },
+  {
+    title: "Книга 2",
+    description: "Какое-то описание для книги 2.",
+    authors: "Harper Lee"
+  }
+]);
 
-### If you want to work with the project locally, follow these steps:
+db.books.find({ title: "Книга 2" });
 
-1. `git clone <repo name>`
-2. Go to the project folder
-3. `npm install`
-4. Starting in development mode `npm run dev`
-   <br>or
-5. Starting in normal mode `npm start`
-6. In the browser, go to: `http://localhost:3000/books` |
-   <br>or
-   Use API:
+db.books.updateOne(
+  { _id: ObjectId("OBJECT_ID") },
+  {
+    $set: {
+      description: "Новое описание.",
+      authors: "Новый автор"
+    }
+  }
+);
 
-### Methods
-
-| Method   | URL                       | Action                  | Comment                                                                                                          |
-| -------- | ------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `POST`   | `/api/user/login`         | user authorization      | this method always returns **Code: 201** and a static object: `{ id: 1, mail: "test@mail.ru" }`                  |
-| `GET`    | `/api/books`              | get all books           | retrieves an array of all books                                                                                  |
-| `GET`    | `/api/books/:id`          | get a book by **ID**    | retrieves a book object; if the record is not found, returns **Code: 404**                                       |
-| `GET`    | `/api/books/:id/download` | download book by **ID** | The method gives the book file to download by its :id; if the record or file is not found, returns **Code: 404** |
-| `POST`   | `/api/books`              | create a book           | creates a book and returns it with an assigned **ID**                                                            |
-| `PUT`    | `/api/books/:id`          | edit a book by **ID**   | edits a book object; if the record is not found, returns **Code: 404**                                           |
-| `DELETE` | `/api/books/:id`          | delete a book by **ID** | deletes a book and returns the response: **'ok'**                                                                |
-
-### Happy use!
+```
