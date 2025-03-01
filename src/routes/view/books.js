@@ -1,19 +1,19 @@
 import express from 'express';
 import { upload } from '../../middleware/upload.js';
-import { Book } from '../../models/Book.js';
-import { store } from '../../store/store.js';
+import Book from '../../models/Book.js';
 import path from 'path';
 import { unlink } from 'fs/promises';
 import { trimStrings } from '../../helpers.js';
-import axios from "axios";
+import axios from 'axios';
 
 const router = express.Router();
 // const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://localhost:4000";
-const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://counter-service:4000";
+const COUNTER_SERVICE_URL =
+  process.env.COUNTER_SERVICE_URL || 'http://counter-service:4000';
 
 router.get('/', async (req, res, next) => {
   try {
-    const { books } = store;
+    const books = await Book.find();
     res.render('book/index', {
       title: 'Books',
       books,
@@ -46,39 +46,46 @@ router.post('/create', upload.single('file'), async (req, res, next) => {
       req.body
     );
     const favorite = req.body.favorite === 'true';
-    const newBook = new Book(
+
+    const newBook = new Book({
       title,
       description,
       authors,
       favorite,
       fileCover,
       fileName,
-      filePath
-    );
+      filePath,
+    });
 
-    store.books.push(newBook);
+    await newBook.save();
     res.redirect('/books');
   } catch (err) {
     next(err);
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
-    const { books } = store;
-    const book = books.find((b) => b.id === req.params.id);
+    const book = await Book.findById(req.params.id);
 
     if (!book) {
-      return res.render("errors/404");
+      return res.render('errors/404');
     }
 
-    await axios.post(`${COUNTER_SERVICE_URL}/counter/${req.params.id}/incr`);
-    const { data } = await axios.get(`${COUNTER_SERVICE_URL}/counter/${req.params.id}`);
+    try {
+      await axios.post(`${COUNTER_SERVICE_URL}/counter/${req.params.id}/incr`);
+      const { data } = await axios.get(
+        `${COUNTER_SERVICE_URL}/counter/${req.params.id}`
+      );
+      book.views = data.views;
+    } catch (error) {
+      console.error('Counter service is unavailable:', error.message);
+    }
 
-    res.render("book/view", {
-      title: "View Book",
+    res.render('book/view', {
+      title: 'View Book',
       book,
-      views: data.views,
+      views: book.views,
       message: req.query.message,
     });
   } catch (err) {
@@ -86,10 +93,9 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.get('/update/:id', (req, res, next) => {
+router.get('/update/:id', async (req, res, next) => {
   try {
-    const { books } = store;
-    const book = books.find((b) => b.id === req.params.id);
+    const book = await Book.findById(req.params.id);
     if (!book) {
       return res.render('errors/404');
     }
@@ -101,11 +107,10 @@ router.get('/update/:id', (req, res, next) => {
 
 router.post('/update/:id', upload.single('file'), async (req, res, next) => {
   try {
-    const { books } = store;
     const { title, authors, description, fileName, favorite } = trimStrings(
       req.body
     );
-    const book = books.find((b) => b.id === req.params.id);
+    const book = await Book.findById(req.params.id);
 
     if (!book) {
       return res.render('errors/404');
@@ -126,6 +131,7 @@ router.post('/update/:id', upload.single('file'), async (req, res, next) => {
     book.fileName = fileName || book.fileName;
     book.favorite = favorite === 'true';
 
+    await book.save();
     res.redirect(
       `/books/${req.params.id}?message=The book has been successfully edited!`
     );
@@ -136,14 +142,11 @@ router.post('/update/:id', upload.single('file'), async (req, res, next) => {
 
 router.post('/delete/:id', async (req, res, next) => {
   try {
-    const { books } = store;
-    const index = books.findIndex((b) => b.id === req.params.id);
+    const book = await Book.findById(req.params.id);
 
-    if (index === -1) {
+    if (!book) {
       return res.render('errors/404');
     }
-
-    const book = books[index];
 
     if (book.filePath) {
       try {
@@ -153,7 +156,7 @@ router.post('/delete/:id', async (req, res, next) => {
       }
     }
 
-    books.splice(index, 1);
+    await Book.findByIdAndDelete(req.params.id);
     res.redirect('/books?message=The book has been successfully deleted!');
   } catch (err) {
     next(err);

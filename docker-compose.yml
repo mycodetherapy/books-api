@@ -1,23 +1,21 @@
-version: "3.8"
+# Use root/example as user/password credentials
+version: '3.1'
 
 services:
-  books-api:
-    build: .
-    container_name: books-api
-    ports:
-      - "3000:3000"
-    depends_on:
-      - counter-service
+  mongo:
+    image: mongo
+    restart: always
     environment:
-      COUNTER_SERVICE_URL: "http://counter-service:4000"
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
 
-  counter-service:
-    build: ../counter-service
-    container_name: counter-service
+  mongo-express:
+    image: mongo-express
+    restart: always
     ports:
-      - "4000:4000"
-    volumes:
-      - counter-data:/app/data
-
-volumes:
-  counter-data:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false

@@ -6,6 +6,7 @@ import path from 'path';
 import { logger } from './middleware/logger.js';
 import { notFound } from './middleware/error-404.js';
 import { errorHandler } from './middleware/error-500.js';
+import connectBooksDB from './db/booksdb.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,8 @@ app.use(express.static(path.resolve('public')));
 app.post('/api/user/login', (req, res) => {
   res.status(201).json({ id: 1, mail: 'test@mail.ru' });
 });
+
+connectBooksDB();
 
 const uploadDir = path.resolve('uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -38,4 +41,3 @@ app.use(errorHandler);
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
-
