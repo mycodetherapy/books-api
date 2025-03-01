@@ -2,6 +2,7 @@ import express from 'express';
 import { upload } from '../../middleware/upload.js';
 import Book from '../../models/Book.js';
 import path from 'path';
+import fs from 'fs';
 import { unlink } from 'fs/promises';
 import { trimStrings } from '../../helpers.js';
 import axios from 'axios';
@@ -42,9 +43,8 @@ router.get('/create', (req, res, next) => {
 router.post('/create', upload.single('file'), async (req, res, next) => {
   try {
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
-    const { title, description, authors, fileCover, fileName } = trimStrings(
-      req.body
-    );
+    const fileName = req.file ? req.file.filename : null;
+    const { title, description, authors, fileCover } = trimStrings(req.body);
     const favorite = req.body.favorite === 'true';
 
     const newBook = new Book({
@@ -107,28 +107,27 @@ router.get('/update/:id', async (req, res, next) => {
 
 router.post('/update/:id', upload.single('file'), async (req, res, next) => {
   try {
-    const { title, authors, description, fileName, favorite } = trimStrings(
-      req.body
-    );
+    const { title, authors, description, favorite } = trimStrings(req.body);
     const book = await Book.findById(req.params.id);
 
     if (!book) {
       return res.render('errors/404');
     }
 
-    if (req.file && book.filePath) {
-      try {
-        await unlink(path.resolve(`.${book.filePath}`));
-      } catch (err) {
-        next(err);
+    if (req.file) {
+      if (book.fileName) {
+        const oldFilePath = path.resolve('uploads', book.fileName);
+        if (fs.existsSync(oldFilePath)) {
+          await unlink(oldFilePath);
+        }
       }
-      book.filePath = `/uploads/${req.file.filename}`;
-    }
 
-    book.title = title;
-    book.authors = authors;
+      book.filePath = `/uploads/${req.file.filename}`;
+      book.fileName = req.file.filename;
+    }
+    book.title = title || book.title;
+    book.authors = authors || book.authors;
     book.description = description || book.description;
-    book.fileName = fileName || book.fileName;
     book.favorite = favorite === 'true';
 
     await book.save();
@@ -148,11 +147,10 @@ router.post('/delete/:id', async (req, res, next) => {
       return res.render('errors/404');
     }
 
-    if (book.filePath) {
-      try {
-        await unlink(path.resolve(`.${book.filePath}`));
-      } catch (err) {
-        next(err);
+    if (book.fileName) {
+      const filePath = path.resolve('uploads', book.fileName);
+      if (fs.existsSync(filePath)) {
+        await unlink(filePath);
       }
     }
 

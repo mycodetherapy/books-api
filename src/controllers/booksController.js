@@ -41,9 +41,9 @@ export const getBookById = async (req, res, next) => {
 
 export const createBook = async (req, res) => {
   try {
-    const { title, description, authors, favorite, fileCover, fileName } =
-      req.body;
+    const { title, description, authors, favorite, fileCover } = req.body;
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const fileName = req.file ? req.file.filename : null;
 
     const newBook = new Book({
       title,
@@ -72,22 +72,23 @@ export const updateBook = async (req, res) => {
     }
 
     if (req.file) {
-      const oldFilePath = path.resolve('uploads', book.filePath);
-      if (fs.existsSync(oldFilePath)) {
-        fs.unlinkSync(oldFilePath);
+      if (book.fileName) {
+        const oldFilePath = path.resolve('uploads', book.fileName);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
       }
 
       book.filePath = `/uploads/${req.file.filename}`;
+      book.fileName = req.file.filename;
     }
 
-    const { title, description, authors, favorite, fileCover, fileName } =
-      req.body;
+    const { title, description, authors, favorite, fileCover } = req.body;
     book.title = title || book.title;
     book.description = description || book.description;
     book.authors = authors || book.authors;
     book.favorite = favorite !== undefined ? favorite : book.favorite;
     book.fileCover = fileCover || book.fileCover;
-    book.fileName = fileName || book.fileName;
 
     await book.save();
     res.json(book);
@@ -101,17 +102,17 @@ export const downloadBook = async (req, res) => {
     const { id } = req.params;
     const book = await Book.findById(id);
 
-    if (!book || !book.filePath) {
+    if (!book || !book.fileName) {
       return res.status(404).send('Book or file not found');
     }
 
-    const filePath = path.resolve('uploads', book.filePath);
+    const filePath = path.resolve('uploads', book.fileName);
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).send('File not found');
     }
 
-    res.download(filePath, book.filePath);
+    res.download(filePath, book.fileName);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -126,9 +127,8 @@ export const deleteBook = async (req, res) => {
       return res.status(404).send('Book not found');
     }
 
-    if (book.filePath) {
-      const filePath = path.resolve('uploads', book.filePath);
-
+    if (book.fileName) {
+      const filePath = path.resolve('uploads', book.fileName);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
