@@ -6,11 +6,15 @@ import fs from 'fs';
 import { unlink } from 'fs/promises';
 import { trimStrings } from '../../helpers.js';
 import axios from 'axios';
+import {isAuthenticated} from "../../middleware/auth.js";
 
 const router = express.Router();
+
 // const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://localhost:4000";
 const COUNTER_SERVICE_URL =
   process.env.COUNTER_SERVICE_URL || 'http://counter-service:4000';
+
+router.use(isAuthenticated);
 
 router.get('/', async (req, res, next) => {
   try {

@@ -1,0 +1,11 @@
+<%- include('../partials/layout-start') %>
+
+<div class="container-sm book-container">
+    <h1>Profile</h1>
+    <p>Welcome, <%= user.username %>!</p>
+    <form action="/user/logout" method="POST">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+</div>
+
+<%- include('../partials/layout-end') %>

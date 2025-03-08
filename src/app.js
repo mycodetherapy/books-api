@@ -7,6 +7,10 @@ import { logger } from './middleware/logger.js';
 import { notFound } from './middleware/error-404.js';
 import { errorHandler } from './middleware/error-500.js';
 import connectBooksDB from './db/booksdb.js';
+import userRoutes from './routes/view/user.js';
+import session from "express-session";
+import passport from "passport";
+import './config/passport.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,11 +23,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve('public')));
 
-app.post('/api/user/login', (req, res) => {
-  res.status(201).json({ id: 1, mail: 'test@mail.ru' });
-});
+app.use(session({ secret: 'SECRET'}));
 
-connectBooksDB();
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use('/user', userRoutes);
+
+ await connectBooksDB();
 
 const uploadDir = path.resolve('uploads');
 if (!fs.existsSync(uploadDir)) {
