@@ -20,6 +20,22 @@
   </head>
   <body></body>
 </html>
+<header>
+  <nav>
+    <div class="container-sm book-container" >
+      <%
+      if (user) { %>
+        <a href="/user/me" class="btn btn-primary">Profile</a>
+            <form action="/user/logout" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-secondary">Logout</button>
+            </form>
+      <% } else { %>
+        <a href="/user/login" class="btn btn-primary">Login</a>
+        <a href="/user/signup" class="btn btn-secondary">Signup</a>
+      <% } %>
+    </div>
+  </nav>
+</header>
 <style>
   .book-container {
     max-width: 800px;

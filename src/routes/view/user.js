@@ -5,10 +5,6 @@ import passport from "passport";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.render("user/index", { title: "Home", user: req.user });
-});
-
 router.get("/login", (req, res) => {
   res.render("user/login", { title: "Login", user: req.user });
 });
@@ -16,21 +12,21 @@ router.get("/login", (req, res) => {
 router.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/user/me",
+    successRedirect: "/books",
     failureRedirect: "/user/login",
   }),
 );
 
-router.get("/signup", (req, res) => {
+router.get("/signup", (req, res, next) => {
   res.render("user/signup", { title: "Signup", user: req.user });
 });
-router.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.render("errors/400");
     }
 
     const newUser = new User({ username, password });
@@ -38,7 +34,7 @@ router.post("/signup", async (req, res) => {
 
     res.redirect("/user/login");
   } catch (error) {
-    res.status(500).json({ message: "Error creating user", error });
+    next(error);
   }
 });
 
@@ -52,9 +48,9 @@ router.get("/me", (req, res) => {
 router.post("/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
-      return res.status(500).json({ message: "Error logging out" });
+      return res.render("errors/500");
     }
-    res.redirect("/user");
+    res.redirect("/");
   });
 });
 
