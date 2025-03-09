@@ -1,7 +1,7 @@
 <%- include('../partials/layout-start') %>
 
 <div class="container book-container">
-    <% if (!user) { %>
+
     <div class="home-wrap">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
             <path d="M100,100 Q150,50 200,100 T300,100 V300 Q250,350 200,300 T100,300 Z" fill="#F4A460"/>
@@ -10,8 +10,11 @@
             <text x="200" y="200" text-anchor="middle" font-size="40" fill="#8B4513">Book</text>
         </svg>
         <h2>Save your books forever!</h2>
+        <% if (user) { %>
+            <a href="/books" class="btn btn-success">Start</a>
+        <% } %>
     </div>
-    <% } %>
+
 </div>
 
 <%- include('../partials/layout-end') %>
