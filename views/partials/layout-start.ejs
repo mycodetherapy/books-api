@@ -21,26 +21,26 @@
   <body></body>
 </html>
 <header>
-  <nav>
-    <div class="container-sm book-container" >
+    <div class="container head" >
       <%
       if (user) { %>
-        <a href="/user/me" class="btn btn-primary">Profile</a>
+            <a href="/user/me" class="btn btn-primary" style="max-height: fit-content">Profile</a>
             <form action="/user/logout" method="POST" style="display: inline;">
                 <button type="submit" class="btn btn-secondary">Logout</button>
             </form>
       <% } else { %>
-        <a href="/user/login" class="btn btn-primary">Login</a>
-        <a href="/user/signup" class="btn btn-secondary">Signup</a>
+              <a href="/user/login" class="btn btn-primary">Login</a>
+              <a href="/user/signup" class="btn btn-secondary">Signup</a>
       <% } %>
     </div>
-  </nav>
 </header>
 <style>
   .book-container {
     max-width: 800px;
     margin: auto;
     padding-top: 30px;
+      background-color: beige;
+      min-height: 100vh;
   }
   .btn {
     min-width: 140px;
@@ -74,5 +74,20 @@
     right: 0;
     text-align: center;
     width: 400px;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+      max-width: 800px;
+      max-height: 78px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background-color: antiquewhite;
+      border-bottom: 2px solid black;
+  }
+  .home-wrap {
+    display: flex;
+    align-items: center;
+      justify-content: center;
   }
 </style>

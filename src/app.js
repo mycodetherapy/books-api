@@ -25,7 +25,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve("public")));
 
-app.use(session({ secret: "SECRET" }));
+app.use(
+  session({
+    secret: "SECRET",
+    resave: false, // Указываем, что сессия не должна сохраняться, если не изменена
+    saveUninitialized: false, // Указываем, что несохраненные сессии не должны сохраняться
+    cookie: { secure: false }, // Для HTTPS установите true
+  }),
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
