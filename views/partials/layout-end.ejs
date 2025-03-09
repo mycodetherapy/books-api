@@ -22,6 +22,15 @@
   }
 </script>
 <script>
+ function goBack() {
+  if (document.referrer) {
+   window.history.back();
+  } else {
+   window.location.href = "/";
+  }
+ }
+</script>
+<script>
   setTimeout(() => {
     const messageElement = document.getElementById('success-message');
     if (messageElement) {

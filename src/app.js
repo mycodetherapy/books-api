@@ -38,7 +38,14 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
 app.use("/", homeRoutes);
 app.use("/api/user", userApiRoutes);
 app.use("/user", userRoutes);

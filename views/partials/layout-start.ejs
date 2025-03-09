@@ -24,7 +24,12 @@
     <div class="container head" >
       <%
       if (user) { %>
-            <a href="/user/me" class="btn btn-primary" style="max-height: fit-content">Profile</a>
+<!--            <a href="/user/me" class="btn btn-primary" style="max-height: fit-content">Profile</a>-->
+            <% if (currentPath === "/me") { %>
+                <button onclick="goBack()" class="btn btn-primary">Back</button>
+            <% } else { %>
+                <a href="/user/me" class="btn btn-primary">Profile</a>
+            <% } %>
             <form action="/user/logout" method="POST" style="display: inline;">
                 <button type="submit" class="btn btn-secondary">Logout</button>
             </form>
@@ -87,6 +92,7 @@
   }
   .home-wrap {
     display: flex;
+      flex-direction: column;
     align-items: center;
       justify-content: center;
   }

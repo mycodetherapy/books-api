@@ -39,10 +39,15 @@ router.post("/signup", async (req, res, next) => {
 });
 
 router.get("/me", (req, res) => {
+  console.log("req.path", req.path);
   if (!req.isAuthenticated()) {
     return res.redirect("/user/login");
   }
-  res.render("user/profile", { title: "Profile", user: req.user });
+  res.render("user/profile", {
+    title: "Profile",
+    user: req.user,
+    currentPath: req.path,
+  });
 });
 
 router.post("/logout", (req, res) => {

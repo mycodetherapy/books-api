@@ -1,73 +1,73 @@
 <%- include('../partials/layout-start') %>
 
 <div class="container-sm book-container">
-  <h1>Create Book</h1>
-  <form action="/books/create" method="POST" enctype="multipart/form-data">
-    <div class="mb-3">
-      <label for="title" class="form-label"><%= fieldLabels.title %></label>
-      <input
-        type="text"
-        id="title"
-        name="title"
-        class="form-control"
-        required
-      />
-    </div>
+    <h1>Create Book</h1>
+    <form action="/books/create" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label"><%= fieldLabels.title %></label>
+            <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    class="form-control"
+                    required
+            />
+        </div>
 
-    <div class="mb-3">
-      <label for="authors" class="form-label"><%= fieldLabels.authors %></label>
-      <input
-        type="text"
-        id="authors"
-        name="authors"
-        class="form-control"
-        required
-      />
-    </div>
-    <div class="mb-3 form-check">
-      <input
-        type="checkbox"
-        id="favorite"
-        name="favorite"
-        class="form-check-input"
-        value="true"
-      />
-      <label for="favorite" class="form-check-label"
-        ><%= fieldLabels.favorite %></label
-      >
-    </div>
+        <div class="mb-3">
+            <label for="authors" class="form-label"><%= fieldLabels.authors %></label>
+            <input
+                    type="text"
+                    id="authors"
+                    name="authors"
+                    class="form-control"
+                    required
+            />
+        </div>
+        <div class="mb-3 form-check">
+            <input
+                    type="checkbox"
+                    id="favorite"
+                    name="favorite"
+                    class="form-check-input"
+                    value="true"
+            />
+            <label for="favorite" class="form-check-label"
+            ><%= fieldLabels.favorite %></label
+            >
+        </div>
 
-    <div class="mb-3">
-      <label for="description" class="form-label"
-        ><%= fieldLabels.description %></label
-      >
-      <textarea
-        id="description"
-        name="description"
-        class="form-control"
-      ></textarea>
-    </div>
+        <div class="mb-3">
+            <label for="description" class="form-label"
+            ><%= fieldLabels.description %></label
+            >
+            <textarea
+                    id="description"
+                    name="description"
+                    class="form-control"
+            ></textarea>
+        </div>
 
-    <div class="mb-3">
-      <input
-        type="file"
-        id="file"
-        name="file"
-        required
-        onchange="previewImage(event)"
-      />
-    </div>
+        <div class="mb-3">
+            <input
+                    type="file"
+                    id="file"
+                    name="file"
+                    required
+                    onchange="previewImage(event)"
+            />
+        </div>
 
-    <img
-      id="preview"
-      src=""
-      alt="Preview"
-      class="preview-image"
-      style="display: none"
-    />
-
-    <button type="submit" class="btn btn-success submit-button">Create</button>
-  </form>
+        <img
+                id="preview"
+                src=""
+                alt="Preview"
+                class="preview-image"
+                style="display: none"
+        />
+        <button type="submit" class="btn btn-success submit-button" style="margin-bottom: 1rem">Create</button>
+        <a href="/books" class="btn btn-secondary">Back to List</a>
+    </form>
 </div>
 
 <%- include('../partials/layout-end') %>

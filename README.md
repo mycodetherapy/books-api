@@ -8,15 +8,18 @@
 4. Starting in development mode `npm run dev`
    <br>or
 5. Starting in normal mode `npm start`
-6. In the browser, go to: `http://localhost:3000/books` |
+6. In the browser, go to: `http://localhost:3000` |
    <br>or
    Use API:
 
 ### Methods
 
 | Method   | URL                       | Action                  | Comment                                                                                                          |
-| -------- | ------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `POST`   | `/api/user/login`         | user authorization      | this method always returns **Code: 201** and a static object: `{ id: 1, mail: "test@mail.ru" }`                  |
+|----------|---------------------------|-------------------------|------------------------------------------------------------------------------------------------------------------|
+| `POST`   | `/api/user/signin`        | user registration       | `{ username: "name", password: "password" }`                                                                     
+| `POST`   | `/api/user/login`         | user authorization      | `{ username: "name", password: "password" }`                                                                     |
+| `GET`    | `/api/user/me`            | user profile            | send token                                                                                                       
+| `DELETE` | `/api/user/:id`           | delete user             | send token and id                                                                                                |
 | `GET`    | `/api/books`              | get all books           | retrieves an array of all books                                                                                  |
 | `GET`    | `/api/books/:id`          | get a book by **ID**    | retrieves a book object; if the record is not found, returns **Code: 404**                                       |
 | `GET`    | `/api/books/:id/download` | download book by **ID** | The method gives the book file to download by its :id; if the record or file is not found, returns **Code: 404** |

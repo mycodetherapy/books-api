@@ -24,6 +24,7 @@ router.get("/", async (req, res, next) => {
       books,
       message: req.query.message,
       user: req.user,
+      currentPath: req.path,
     });
   } catch (err) {
     next(err);
@@ -44,6 +45,7 @@ router.get("/create", (req, res, next) => {
       book: {},
       fieldLabels,
       user: req.user,
+      currentPath: req.path,
     });
   } catch (err) {
     next(err);
@@ -98,6 +100,7 @@ router.get("/:id", async (req, res, next) => {
       views: book.views,
       message: req.query.message,
       user: req.user,
+      currentPath: req.path,
     });
   } catch (err) {
     next(err);
