@@ -1,14 +1,16 @@
 import express from "express";
-import booksRouter from "./routes/view/books.js";
-import apiBooksRouter from "./routes/api/books.js";
+
 import fs from "fs";
 import path from "path";
 import { logger } from "./middleware/logger.js";
 import { notFound } from "./middleware/error-404.js";
 import { errorHandler } from "./middleware/error-500.js";
 import connectBooksDB from "./db/booksdb.js";
+import booksRouter from "./routes/view/books.js";
+import apiBooksRouter from "./routes/api/books.js";
 import homeRoutes from "./routes/view/home.js";
 import userRoutes from "./routes/view/user.js";
+import userApiRoutes from "./routes/api/user.js";
 import session from "express-session";
 import passport from "passport";
 import "./config/passport.js";
@@ -28,9 +30,9 @@ app.use(express.static(path.resolve("public")));
 app.use(
   session({
     secret: "SECRET",
-    resave: false, // Указываем, что сессия не должна сохраняться, если не изменена
-    saveUninitialized: false, // Указываем, что несохраненные сессии не должны сохраняться
-    cookie: { secure: false }, // Для HTTPS установите true
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
   }),
 );
 
@@ -38,6 +40,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/", homeRoutes);
+app.use("/api/user", userApiRoutes);
 app.use("/user", userRoutes);
 
 await connectBooksDB();
