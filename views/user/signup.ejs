@@ -15,6 +15,9 @@
         </div>
         <button type="submit" class="btn btn-success">Signup</button>
     </form>
+    <% if (user) { %>
+         <button onclick="goBack()" class="btn btn-primary">Back</button>
+    <% } %>
 </div>
 
 <%- include('../partials/layout-end') %>
