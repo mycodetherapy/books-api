@@ -57,6 +57,29 @@ const setupCommentSocket = (server) => {
       }
     });
 
+    socket.on("updateComment", async (data) => {
+      const { commentId, text, userId } = data;
+
+      try {
+        const comment = await Comment.findById(commentId);
+        if (!comment || comment.userId.toString() !== userId) {
+          return socket.emit("updateCommentError", {
+            message: "You can only edit your own comments",
+          });
+        }
+
+        comment.text = text;
+        await comment.save();
+
+        io.to(bookId).emit("commentUpdated", { commentId, text });
+      } catch (err) {
+        console.error("Error updating comment:", err);
+        socket.emit("updateCommentError", {
+          message: "Failed to update comment",
+        });
+      }
+    });
+
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });
