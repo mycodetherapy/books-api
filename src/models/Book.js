@@ -1,21 +1,22 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const bookSchema = new mongoose.Schema(
   {
-    title: { type: String, default: '', required: true },
-    description: { type: String, default: '' },
-    authors: { type: String, default: '', required: true },
+    title: { type: String, default: "", required: true },
+    description: { type: String, default: "" },
+    authors: { type: String, default: "", required: true },
     favorite: { type: Boolean, default: false },
-    fileCover: { type: String, default: '' },
-    fileName: { type: String, default: '' },
-    filePath: { type: String, default: '' },
+    fileCover: { type: String, default: "" },
+    fileName: { type: String, default: "" },
+    filePath: { type: String, default: "" },
     views: { type: Number, default: 0 },
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-const Book = mongoose.model('Book', bookSchema);
+const Book = mongoose.model("Book", bookSchema);
 
 export default Book;

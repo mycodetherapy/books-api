@@ -78,7 +78,13 @@ router.post("/create", upload.single("file"), async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const book = await Book.findById(req.params.id);
+    const book = await Book.findById(req.params.id).populate({
+      path: "comments",
+      populate: {
+        path: "userId",
+        select: "username",
+      },
+    });
 
     if (!book) {
       return res.render("errors/404");
