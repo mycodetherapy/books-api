@@ -1,8 +1,5 @@
 <%- include('../partials/layout-start') %>
 
-<% if (message) { %>
-<div id="success-message" class="alert alert-success"><%= message %></div>
-<% } %>
 <div class="container-sm book-container">
     <h1><%= book.title %></h1>
     <p><strong>Authors:</strong> <%= book.authors %></p>
@@ -17,14 +14,16 @@
     <% } %>
     <p><strong>Views:</strong> <%= views %></p>
     <div class="button-container">
+        <% if (user && book.userId.toString() === user.id) { %>
         <a href="/books/update/<%= book.id %>" class="btn btn-warning">Edit</a>
         <form
-                action="/books/delete/<%= book.id %>"
-                method="POST"
-                style="display: inline"
+            action="/books/delete/<%= book.id %>"
+            method="POST"
+            style="display: inline"
         >
             <button type="submit" class="btn btn-danger">Delete</button>
         </form>
+        <% } %>
         <a href="/books" class="btn btn-secondary">Back to List</a>
     </div>
 

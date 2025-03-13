@@ -22,6 +22,9 @@
   <body></body>
 </html>
 <header>
+<% if (message) { %>
+<div id="success-message" class="alert alert-success"><%= message %></div>
+<% } %>
     <div class="container head" >
       <%
       if (user) { %>

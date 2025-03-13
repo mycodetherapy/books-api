@@ -10,6 +10,11 @@ const bookSchema = new mongoose.Schema(
     fileName: { type: String, default: "" },
     filePath: { type: String, default: "" },
     views: { type: Number, default: 0 },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   {

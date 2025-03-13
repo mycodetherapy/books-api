@@ -1,6 +1,7 @@
 import express from "express";
 import { upload } from "../../middleware/upload.js";
 import Book from "../../models/Book.js";
+import Comment from "../../models/Comment.js";
 import path from "path";
 import fs from "fs";
 import { unlink } from "fs/promises";
@@ -67,6 +68,7 @@ router.post("/create", upload.single("file"), async (req, res, next) => {
       fileCover,
       fileName,
       filePath,
+      userId: req.user.id,
     });
 
     await newBook.save();
@@ -90,14 +92,18 @@ router.get("/:id", async (req, res, next) => {
       return res.render("errors/404");
     }
 
-    try {
-      await axios.post(`${COUNTER_SERVICE_URL}/counter/${req.params.id}/incr`);
-      const { data } = await axios.get(
-        `${COUNTER_SERVICE_URL}/counter/${req.params.id}`,
-      );
-      book.views = data.views;
-    } catch (error) {
-      console.error("Counter service is unavailable:", error.message);
+    if (book.userId.toString() !== req.user.id) {
+      try {
+        await axios.post(
+          `${COUNTER_SERVICE_URL}/counter/${req.params.id}/incr`,
+        );
+        const { data } = await axios.get(
+          `${COUNTER_SERVICE_URL}/counter/${req.params.id}`,
+        );
+        book.views = data.views;
+      } catch (error) {
+        console.error("Counter service is unavailable:", error.message);
+      }
     }
 
     res.render("book/view", {
@@ -134,6 +140,12 @@ router.post("/update/:id", upload.single("file"), async (req, res, next) => {
       return res.render("errors/404");
     }
 
+    if (book.userId.toString() !== req.user.id) {
+      return res.status(403).render("errors/403", {
+        message: "You can only edit books you created.",
+      });
+    }
+
     if (req.file) {
       if (book.fileName) {
         const oldFilePath = path.resolve("uploads", book.fileName);
@@ -167,6 +179,12 @@ router.post("/delete/:id", async (req, res, next) => {
       return res.render("errors/404");
     }
 
+    if (book.userId.toString() !== req.user.id) {
+      return res.status(403).render("errors/403", {
+        message: "You can only delete books you created.",
+      });
+    }
+
     if (book.fileName) {
       const filePath = path.resolve("uploads", book.fileName);
       if (fs.existsSync(filePath)) {
@@ -174,6 +192,7 @@ router.post("/delete/:id", async (req, res, next) => {
       }
     }
 
+    await Comment.deleteMany({ bookId: book._id });
     await Book.findByIdAndDelete(req.params.id);
     res.redirect("/books?message=The book has been successfully deleted!");
   } catch (err) {
