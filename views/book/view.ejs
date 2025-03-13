@@ -28,69 +28,95 @@
         <a href="/books" class="btn btn-secondary">Back to List</a>
     </div>
 
-         <h3 style="margin-top: 30px">Comments</h3>
-             <div class="mb-3">
-                 <div class="form-group">
-                     <textarea
-                            placeholder="message"
-                            class="form-control"
-                            id="text"
-                      ></textarea>
-                    </div>
-                    <button type="submit" id="send-comment" class="btn btn-primary">room</button>
-                </div>
+         <h3 class="mt-4">Comments</h3>
+         <div class="mb-3">
+             <div class="form-group">
+                 <textarea
+                     placeholder="message"
+                     class="form-control"
+                     id="text"
+                 ></textarea>
+             </div>
+             <button type="submit" id="send-comment" class="btn btn-primary">Send</button>
+         </div>
 
+         <div class="mb-3">
+             <div id="list" class="list-group">
+                 <% book.comments.reverse().forEach(comment => { %>
+                 <div class="list-group-item list-group-item-action">
+                     <p class="mb-1 comment-text"><%= comment.text %></p>
+                     <small>
+                         <strong><%= comment.userId.username %></strong> -
+                         <%= new Date(comment.createdAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                     </small>
+                     <% if (user && comment.userId._id.toString() === user.id) { %>
+                      <div class="mt-2">
+                      <button class="btn btn-sm btn-danger delete-comment" data-comment-id="<%= comment._id %>">Delete comment</button>
+                      </div>
+                     <% } %>
+                 </div>
+                 <% }) %>
+             </div>
+         </div>
 
-            <div class="mb-3">
-                <div id="list" class="list-group">
-                <% book.comments.reverse().forEach(comment => { %>
-                <div class="list-group-item list-group-item-action">
-                    <p class="mb-1"><%= comment.text %></p>
-                    <small>
-                        <strong><%= comment.userId.username %></strong> -
-                        <%= new Date(comment.createdAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
-                    </small>
-                </div>
-                <% }) %>
-                </div>
-          </div>
-</div>
+         <script src="/socket.io/socket.io.js"></script>
+         <script>
+             const socket = io('/', { query: { bookId: '<%= book.id %>' } });
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    const socket = io('/', { query: { bookId: '<%= book.id %>' } }); // Подключаемся к комнате книги
+             const boxList = document.querySelector('#list');
+             const sendComment = document.querySelector('#send-comment');
+             const inputText = document.querySelector('#text');
 
-    const boxList = document.querySelector('#list');
-    const sendComment = document.querySelector('#send-comment');
-    const inputText     = document.querySelector('#text');
+             const getTmp = (msg) => {
+                 const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+                 const formattedDate = new Date(msg.createdAt).toLocaleString('ru-RU', dateOptions);
 
-    const getTmp = (msg) => {
-        const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const formattedDate = new Date(msg.createdAt).toLocaleString('ru-RU', dateOptions);
+                 return `
+                     <div class="list-group-item list-group-item-action">
+                         <p class="mb-1 comment-text">${msg.text}</p>
+                         <small>
+                             <strong>${msg.userId.username}</strong> -
+                             ${formattedDate}
+                         </small>
+                          <div class="mt-2">
+                          <button class="btn btn-sm btn-danger delete-comment" data-comment-id="${msg._id}">Delete comment</button>
+                          </div>
+                     </div>
+                 `;
+             };
 
-        return `
-            <div class="list-group-item list-group-item-action">
-                <p class="mb-1">${msg.text}</p>
-                <small>
-                    <strong>${msg.userId.username}</strong> -
-                    ${formattedDate}
-                </small>
-            </div>
-        `;
-    };
-    socket.on('newComment', (msg) => {
-        const div = getTmp(msg)
-        boxList.insertAdjacentHTML('afterbegin', div)
-    });
+             socket.on('newComment', (msg) => {
+                 const div = getTmp(msg);
+                 boxList.insertAdjacentHTML('afterbegin', div);
+             });
 
-    sendComment.addEventListener('click', () => {
-        socket.emit('newComment', {
-            text: inputText.value,
-            userId: '<%= user.id %>'
-        })
-        inputText.value = '';
-    })
+             sendComment.addEventListener('click', () => {
+                 socket.emit('newComment', {
+                     text: inputText.value,
+                     userId: '<%= user.id %>'
+                 });
+                 inputText.value = '';
+             });
 
-</script>
+             document.addEventListener('click', async (e) => {
+                 if (e.target.classList.contains('delete-comment')) {
+                     const commentId = e.target.getAttribute('data-comment-id');
+                     const userId = '<%= user.id %>';
+
+                     socket.emit('deleteComment', { commentId, userId });
+                 }
+             });
+
+             socket.on('commentDeleted', ({ commentId }) => {
+                 const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`).closest('.list-group-item');
+                 if (commentElement) {
+                     commentElement.remove();
+                 }
+             });
+
+             socket.on('deleteCommentError', ({ message }) => {
+                 alert(message);
+             });
+         </script>
 
 <%- include('../partials/layout-end') %>

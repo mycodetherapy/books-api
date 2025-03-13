@@ -31,6 +31,32 @@ const setupCommentSocket = (server) => {
       }
     });
 
+    socket.on("deleteComment", async (data) => {
+      const { commentId, userId } = data;
+
+      try {
+        const comment = await Comment.findById(commentId);
+        if (!comment || comment.userId.toString() !== userId) {
+          return socket.emit("deleteCommentError", {
+            message: "You can only delete your own comments",
+          });
+        }
+
+        await Comment.findByIdAndDelete(commentId);
+
+        await Book.findByIdAndUpdate(bookId, {
+          $pull: { comments: commentId },
+        });
+
+        io.to(bookId).emit("commentDeleted", { commentId });
+      } catch (err) {
+        console.error("Error deleting comment:", err);
+        socket.emit("deleteCommentError", {
+          message: "Failed to delete comment",
+        });
+      }
+    });
+
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });
