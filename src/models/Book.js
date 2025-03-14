@@ -5,7 +5,7 @@ const bookSchema = new mongoose.Schema(
     title: { type: String, default: "", required: true },
     description: { type: String, default: "" },
     authors: { type: String, default: "", required: true },
-    favorite: { type: Boolean, default: false },
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     fileCover: { type: String, default: "" },
     fileName: { type: String, default: "" },
     filePath: { type: String, default: "" },

@@ -1,9 +1,9 @@
-import { Server } from "socket.io";
 import Book from "../models/Book.js";
 import Comment from "../models/Comment.js";
+import { getIO } from "./socket.js";
 
-const setupCommentSocket = (server) => {
-  const io = new Server(server);
+const setupCommentSocket = () => {
+  const io = getIO();
 
   io.on("connection", (socket) => {
     console.log("a user connected");

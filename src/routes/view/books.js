@@ -38,7 +38,6 @@ router.get("/create", (req, res, next) => {
       title: "Title",
       authors: "Authors",
       description: "Description",
-      favorite: "Favorite",
       fileName: "File name",
     };
     res.render("book/create", {
@@ -58,13 +57,11 @@ router.post("/create", upload.single("file"), async (req, res, next) => {
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
     const fileName = req.file ? req.file.filename : null;
     const { title, description, authors, fileCover } = trimStrings(req.body);
-    const favorite = req.body.favorite === "true";
 
     const newBook = new Book({
       title,
       description,
       authors,
-      favorite,
       fileCover,
       fileName,
       filePath,
@@ -133,7 +130,7 @@ router.get("/update/:id", async (req, res, next) => {
 
 router.post("/update/:id", upload.single("file"), async (req, res, next) => {
   try {
-    const { title, authors, description, favorite } = trimStrings(req.body);
+    const { title, authors, description } = trimStrings(req.body);
     const book = await Book.findById(req.params.id);
 
     if (!book) {
@@ -160,7 +157,6 @@ router.post("/update/:id", upload.single("file"), async (req, res, next) => {
     book.title = title || book.title;
     book.authors = authors || book.authors;
     book.description = description || book.description;
-    book.favorite = favorite === "true";
 
     await book.save();
     res.redirect(

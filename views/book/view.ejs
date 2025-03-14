@@ -4,7 +4,21 @@
     <h1><%= book.title %></h1>
     <p><strong>Authors:</strong> <%= book.authors %></p>
     <p><strong>Description:</strong> <%= book.description %></p>
-    <p><strong>Favorite:</strong> <%= book.favorite %></p>
+   <div class="mb-3 form-check">
+     <input
+       type="checkbox"
+       id="favorite"
+       name="favorite"
+       class="form-check-input"
+       <%= book.favorites.includes(user.id) ? "checked" : "" %>
+       onchange="toggleFavorite('<%= book.id %>')"
+     />
+     <label for="favorite" class="form-check-label">Add to favorites</label>
+   </div>
+   <p>
+     <strong>Favorites:</strong>
+     <span id="favorites-count"><%= book.favorites.length %></span> users added this book to favorites.
+   </p>
     <% if (book.filePath) { %>
     <img
             src="<%= book.filePath %>"
@@ -73,117 +87,112 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io('/', { query: { bookId: '<%= book.id %>' } });
+   <script src="/socket.io/socket.io.js"></script>
+   <script>
+       const socket = io("/", { query: { bookId: "<%= book.id %>" } });
 
-        const boxList = document.querySelector('#list');
-        const sendComment = document.querySelector('#send-comment');
-        const inputText = document.querySelector('#text');
+       const boxList = document.querySelector("#list");
+       const sendComment = document.querySelector("#send-comment");
+       const inputText = document.querySelector("#text");
+       const favoriteCheckbox = document.querySelector("#favorite");
+       const favoritesCount = document.querySelector("#favorites-count");
 
-        const getTmp = (msg) => {
-            const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-            const formattedDate = new Date(msg.createdAt).toLocaleString('ru-RU', dateOptions);
+       const getCommentTemplate = (msg) => {
+           const dateOptions = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
+           const formattedDate = new Date(msg.createdAt).toLocaleString("ru-RU", dateOptions);
 
-            return `
-                <div class="list-group-item list-group-item-action">
-                    <p class="mb-1 comment-text">${msg.text}</p>
-                    <small>
-                        <strong>${msg.userId.username}</strong> -
-                        ${formattedDate}
-                    </small>
-                                    <div class="mt-2">
-                                        <button class="btn-sm btn-warning edit-comment" data-comment-id="${msg._id}" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn-sm btn-danger delete-comment" data-comment-id="${msg._id}" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
+           return `
+               <div class="list-group-item list-group-item-action">
+                   <p class="mb-1 comment-text">${msg.text}</p>
+                   <small>
+                       <strong>${msg.userId.username}</strong> - ${formattedDate}
+                   </small>
+                   <div class="mt-2">
+                       <button class="btn-sm btn-warning edit-comment" data-comment-id="${msg._id}" title="Edit">
+                           <i class="bi bi-pencil"></i>
+                       </button>
+                       <button class="btn-sm btn-danger delete-comment" data-comment-id="${msg._id}" title="Delete">
+                           <i class="bi bi-trash"></i>
+                       </button>
+                   </div>
+                   <div id="edit-form-${msg._id}" class="edit-form mt-2" style="display: none;">
+                       <textarea class="form-control edit-text">${msg.text}</textarea>
+                       <button class="btn-sm btn-success mt-2 save-edit" data-comment-id="${msg._id}" title="Save">
+                           <i class="bi bi-check"></i>
+                       </button>
+                       <button class="btn-sm btn-secondary mt-2 cancel-edit" data-comment-id="${msg._id}" title="Cancel">
+                           <i class="bi bi-x"></i>
+                       </button>
+                   </div>
+               </div>
+           `;
+       };
 
-                                    <div id="edit-form-${msg._id}" class="edit-form mt-2" style="display: none;">
-                                        <textarea class="form-control edit-text">${msg.text}</textarea>
-                                        <button class="btn-sm btn-success mt-2 save-edit" data-comment-id="${msg._id}" title="Save">
-                                            <i class="bi bi-check"></i>
-                                        </button>
-                                        <button class="btn-sm btn-secondary mt-2 cancel-edit" data-comment-id="${msg._id}" title="Cancel">
-                                            <i class="bi bi-x"></i>
-                                        </button>
-                                    </div>
-                </div>
-            `;
-        };
+       socket.on("newComment", (msg) => {
+           boxList.insertAdjacentHTML("afterbegin", getCommentTemplate(msg));
+       });
 
-        socket.on('newComment', (msg) => {
-            const div = getTmp(msg);
-            boxList.insertAdjacentHTML('afterbegin', div);
-        });
+       sendComment.addEventListener("click", () => {
+           socket.emit("newComment", {
+               text: inputText.value,
+               userId: "<%= user.id %>",
+           });
+           inputText.value = "";
+       });
 
-        sendComment.addEventListener('click', () => {
-            socket.emit('newComment', {
-                text: inputText.value,
-                userId: '<%= user.id %>'
-            });
-            inputText.value = '';
-        });
+       document.addEventListener("click", (e) => {
+           const target = e.target;
+           const commentId = target.getAttribute("data-comment-id");
 
-        document.addEventListener('click', async (e) => {
-            if (e.target.classList.contains('delete-comment')) {
-                const commentId = e.target.getAttribute('data-comment-id');
-                const userId = '<%= user.id %>';
+           if (target.classList.contains("delete-comment")) {
+               socket.emit("deleteComment", { commentId, userId: "<%= user.id %>" });
+           }
 
-                socket.emit('deleteComment', { commentId, userId });
-            }
+           if (target.classList.contains("edit-comment")) {
+               document.querySelector(`#edit-form-${commentId}`).style.display = "block";
+           }
 
-            if (e.target.classList.contains('edit-comment')) {
-                const commentId = e.target.getAttribute('data-comment-id');
-                const editForm = document.querySelector(`#edit-form-${commentId}`);
-                const commentText = document.querySelector(`#edit-form-${commentId} .edit-text`);
+           if (target.classList.contains("cancel-edit")) {
+               document.querySelector(`#edit-form-${commentId}`).style.display = "none";
+           }
 
-                editForm.style.display = 'block';
-            }
+           if (target.classList.contains("save-edit")) {
+               const newText = document.querySelector(`#edit-form-${commentId} .edit-text`).value;
+               socket.emit("updateComment", { commentId, text: newText, userId: "<%= user.id %>" });
+           }
+       });
 
-            if (e.target.classList.contains('cancel-edit')) {
-                const commentId = e.target.getAttribute('data-comment-id');
-                const editForm = document.querySelector(`#edit-form-${commentId}`);
+       socket.on("commentDeleted", ({ commentId }) => {
+           document.querySelector(`[data-comment-id="${commentId}"]`)?.closest(".list-group-item")?.remove();
+       });
 
-                editForm.style.display = 'none';
-            }
+       socket.on("commentUpdated", ({ commentId, text }) => {
+           const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`)?.closest(".list-group-item");
+           if (commentElement) {
+               commentElement.querySelector(".comment-text").textContent = text;
+               commentElement.querySelector(".edit-form").style.display = "none";
+           }
+       });
 
-            if (e.target.classList.contains('save-edit')) {
-                const commentId = e.target.getAttribute('data-comment-id');
-                const editText = document.querySelector(`#edit-form-${commentId} .edit-text`).value;
-                const userId = '<%= user.id %>';
+       favoriteCheckbox.addEventListener("change", () => {
+           socket.emit("toggleFavorite", {
+               bookId: "<%= book.id %>",
+               userId: "<%= user.id %>",
+           });
+       });
 
-                socket.emit('updateComment', { commentId, text: editText, userId });
-            }
-        });
+       socket.on("favoriteUpdated", ({ bookId, favorites }) => {
+           if (bookId === "<%= book.id %>") {
+               favoritesCount.textContent = favorites;
+           }
+       });
 
-        socket.on('commentDeleted', ({ commentId }) => {
-            const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`).closest('.list-group-item');
-            if (commentElement) {
-                commentElement.remove();
-            }
-        });
+       const handleSocketError = ({ message }) => alert(message);
 
-        socket.on('deleteCommentError', ({ message }) => {
-            alert(message);
-        });
+              socket.on("deleteCommentError", handleSocketError);
+              socket.on("updateCommentError", handleSocketError);
+              socket.on("toggleFavoriteError", handleSocketError);
 
-        socket.on('commentUpdated', ({ commentId, text }) => {
-            const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`).closest('.list-group-item');
-            if (commentElement) {
-                const commentTextElement = commentElement.querySelector('.comment-text');
-                commentTextElement.textContent = text;
-
-                const editForm = commentElement.querySelector('.edit-form');
-                editForm.style.display = 'none';
-            }
-        });
-
-        socket.on('updateCommentError', ({ message }) => {
-            alert(message);
-        });
-    </script>
+   </script>
 
 <%- include('../partials/layout-end') %>

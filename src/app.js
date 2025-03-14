@@ -18,11 +18,14 @@ import userRoutes from "./routes/view/user.js";
 import userApiRoutes from "./routes/api/user.js";
 
 import "./config/passport.js";
-import setupCommentSocket from "./sokets/commentSoket.js";
+import setupCommentSocket from "./sockets/commentSocket.js";
+import setupFavoriteSocket from "./sockets/favoriteSocket.js";
+import { initSocket } from "./sockets/socket.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
+initSocket(server);
 
 app.set("view engine", "ejs");
 
@@ -72,7 +75,8 @@ if (!fs.existsSync(uploadDir)) {
 
 app.use("/uploads", express.static(uploadDir));
 
-setupCommentSocket(server);
+setupCommentSocket();
+setupFavoriteSocket();
 
 app.use(notFound);
 app.use(errorHandler);
