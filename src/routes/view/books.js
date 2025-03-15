@@ -19,13 +19,44 @@ router.use(isAuthenticated);
 
 router.get("/", async (req, res, next) => {
   try {
-    const books = await Book.find();
+    const { search, author, sort, page = 1, limit = 10 } = req.query;
+    const query = {};
+
+    if (search) {
+      query.title = { $regex: search, $options: "i" };
+    }
+
+    if (author) {
+      query.authors = { $regex: author, $options: "i" };
+    }
+
+    const sortOptions = {};
+    if (sort) {
+      sortOptions[sort] = 1;
+    }
+
+    const skip = (page - 1) * limit;
+
+    const books = await Book.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalBooks = await Book.countDocuments(query);
+    const totalPages = Math.ceil(totalBooks / limit);
+
     res.render("book/index", {
       title: "Books",
       books,
       message: req.query.message,
       user: req.user,
       currentPath: req.path,
+      currentPage: parseInt(page),
+      totalPages,
+      limit: parseInt(limit),
+      search,
+      author,
+      sort,
     });
   } catch (err) {
     next(err);

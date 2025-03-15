@@ -8,7 +8,7 @@ const setupCommentSocket = () => {
   io.on("connection", (socket) => {
     console.log("a user connected");
     const { bookId } = socket.handshake.query;
-    socket.join(bookId); // Подключаем сокет к комнате с ID книги
+    socket.join(bookId);
 
     socket.on("newComment", async (data) => {
       const { text, userId } = data;
