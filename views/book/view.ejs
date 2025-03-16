@@ -53,7 +53,7 @@
         <button type="submit" id="send-comment" class="btn btn-primary">Send</button>
     </div>
 
-    <div class="mb-3">
+    <div id="comments-list" class="mb-3">
         <div id="list" class="list-group">
             <% book.comments.reverse().forEach(comment => { %>
             <div class="list-group-item list-group-item-action">
@@ -85,7 +85,28 @@
             </div>
             <% }) %>
         </div>
+
+        <% if (commentsTotalPages > 1) { %>
+          <%- include('../partials/pagination', {
+            baseUrl: `/books/${book.id}`,
+            currentPage: commentsPage,
+            totalPages: commentsTotalPages,
+            limit: commentsLimit,
+            search: "",
+            author: "",
+            sort: ""
+          }) %>
+        <% } %>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const commentsList = document.getElementById("comments-list");
+        if (commentsList && window.location.hash === "#comments-list") {
+          commentsList.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    </script>
 
    <script src="/socket.io/socket.io.js"></script>
    <script>

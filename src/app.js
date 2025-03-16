@@ -61,9 +61,9 @@ app.use("/api/books", apiBooksRouter);
 (async () => {
   try {
     await connectBooksDB();
-    console.log("✅ База данных подключена");
+    console.log("✅ Database connected");
   } catch (error) {
-    console.error("❌ Ошибка подключения к базе данных:", error);
+    console.error("❌ Database connection error:", error);
     process.exit(1);
   }
 })();

@@ -19,13 +19,44 @@ router.use(isAuthenticated);
 
 router.get("/", async (req, res, next) => {
   try {
-    const books = await Book.find();
+    const { search, author, sort, page = 1, limit = 20 } = req.query;
+    const query = {};
+
+    if (search) {
+      query.title = { $regex: search, $options: "i" };
+    }
+
+    if (author) {
+      query.authors = { $regex: author, $options: "i" };
+    }
+
+    const sortOptions = {};
+    if (sort) {
+      sortOptions[sort] = 1;
+    }
+
+    const skip = (page - 1) * limit;
+
+    const books = await Book.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalBooks = await Book.countDocuments(query);
+    const totalPages = Math.ceil(totalBooks / limit);
+
     res.render("book/index", {
       title: "Books",
       books,
       message: req.query.message,
       user: req.user,
       currentPath: req.path,
+      currentPage: parseInt(page),
+      totalPages,
+      limit: parseInt(limit),
+      search,
+      author,
+      sort,
     });
   } catch (err) {
     next(err);
@@ -77,17 +108,28 @@ router.post("/create", upload.single("file"), async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const { page = 1, limit = 20 } = req.query;
+
     const book = await Book.findById(req.params.id).populate({
       path: "comments",
       populate: {
         path: "userId",
         select: "username",
       },
+      options: {
+        skip: (page - 1) * limit,
+        limit: parseInt(limit),
+        sort: { createdAt: -1 },
+      },
     });
 
     if (!book) {
       return res.render("errors/404");
     }
+
+    const totalComments = await Comment.countDocuments({ bookId: id });
+    const totalPages = Math.ceil(totalComments / limit);
 
     if (book.userId.toString() !== req.user.id) {
       try {
@@ -110,6 +152,9 @@ router.get("/:id", async (req, res, next) => {
       message: req.query.message,
       user: req.user,
       currentPath: req.path,
+      commentsPage: parseInt(page),
+      commentsLimit: parseInt(limit),
+      commentsTotalPages: totalPages,
     });
   } catch (err) {
     next(err);

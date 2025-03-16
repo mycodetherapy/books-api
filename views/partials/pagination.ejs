@@ -1,0 +1,30 @@
+<nav aria-label="Page navigation" class="mt-3">
+  <ul class="pagination">
+    <% if (currentPage > 1) { %>
+    <li class="page-item">
+      <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %>&limit=<%= limit %>#comments-list">Previous</a>
+    </li>
+    <% } %>
+
+    <% for (let i = 1; i <= Math.min(5, totalPages); i++) { %>
+    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+      <a class="page-link" href="<%= baseUrl %>?page=<%= i %>&limit=<%= limit %>#comments-list"><%= i %></a>
+    </li>
+    <% } %>
+
+    <% if (totalPages > 5) { %>
+    <li class="page-item disabled">
+      <span class="page-link">...</span>
+    </li>
+    <li class="page-item <%= totalPages === currentPage ? 'active' : '' %>">
+      <a class="page-link" href="<%= baseUrl %>?page=<%= totalPages %>&limit=<%= limit %>#comments-list"><%= totalPages %></a>
+    </li>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+    <li class="page-item">
+      <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %>&limit=<%= limit %>#comments-list">Next</a>
+    </li>
+    <% } %>
+  </ul>
+</nav>
