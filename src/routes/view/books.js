@@ -9,7 +9,8 @@ import { trimStrings } from "../../helpers.js";
 import axios from "axios";
 import { isAuthenticated } from "../../middleware/auth.js";
 import { container } from "../../container.js";
-import { BooksRepository } from "../../repositories/BooksRepository.js";
+//import { BooksRepository } from "../../repositories/BooksRepository.js";
+import { BooksRepositoryImpl } from "../../repositories/BooksRepositoryImpl.js";
 
 const router = express.Router();
 
@@ -113,7 +114,10 @@ router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     const { page = 1, limit = 20 } = req.query;
 
-    const booksRepository = container.get(BooksRepository);
+    // const booksRepository = container.get(BooksRepository);
+    // const book = await booksRepository.getBook(req.params.id);
+
+    const booksRepository = container.get(BooksRepositoryImpl);
     const book = await booksRepository.getBook(req.params.id);
 
     if (!book) {

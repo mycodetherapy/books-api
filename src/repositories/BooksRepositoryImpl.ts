@@ -19,7 +19,7 @@ export class BooksRepositoryImpl extends BooksRepository {
         },
       })
       .populate("userId", "username")
-      .populate("favorites");
+      .populate("favorites", "username");
   }
 
   async getBooks(): Promise<IBook[]> {
