@@ -10,8 +10,6 @@ import axios from "axios";
 import { isAuthenticated } from "../../middleware/auth.js";
 import { container } from "../../container.js";
 import { BooksRepository } from "../../repositories/BooksRepository.js";
-import { CommentsRepository } from "../../repositories/CommentsRepository.js";
-import { FavoritesRepository } from "../../repositories/FavoritesRepository.js";
 
 const router = express.Router();
 
