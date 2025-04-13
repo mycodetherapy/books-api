@@ -1,11 +1,11 @@
-import Book from '../models/Book.js';
-import path from 'path';
-import fs from 'fs';
-import axios from 'axios';
+import Book from "../models/Book.ts";
+import path from "path";
+import fs from "fs";
+import axios from "axios";
 
 // const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://localhost:4000";
 const COUNTER_SERVICE_URL =
-  process.env.COUNTER_SERVICE_URL || 'http://counter-service:4000';
+  process.env.COUNTER_SERVICE_URL || "http://counter-service:4000";
 
 export const getAllBooks = async (req, res) => {
   try {
@@ -22,7 +22,7 @@ export const getBookById = async (req, res, next) => {
     const book = await Book.findById(id);
 
     if (!book) {
-      return res.status(404).json({ error: 'Book not found' });
+      return res.status(404).json({ error: "Book not found" });
     }
 
     try {
@@ -30,7 +30,7 @@ export const getBookById = async (req, res, next) => {
       const { data } = await axios.get(`${COUNTER_SERVICE_URL}/counter/${id}`);
       book.views = data.views;
     } catch (error) {
-      console.error('Counter service is unavailable:', error.message);
+      console.error("Counter service is unavailable:", error.message);
     }
 
     res.json(book);
@@ -68,12 +68,12 @@ export const updateBook = async (req, res) => {
     const book = await Book.findById(id);
 
     if (!book) {
-      return res.status(404).send('Book not found');
+      return res.status(404).send("Book not found");
     }
 
     if (req.file) {
       if (book.fileName) {
-        const oldFilePath = path.resolve('uploads', book.fileName);
+        const oldFilePath = path.resolve("uploads", book.fileName);
         if (fs.existsSync(oldFilePath)) {
           fs.unlinkSync(oldFilePath);
         }
@@ -103,13 +103,13 @@ export const downloadBook = async (req, res) => {
     const book = await Book.findById(id);
 
     if (!book || !book.fileName) {
-      return res.status(404).send('Book or file not found');
+      return res.status(404).send("Book or file not found");
     }
 
-    const filePath = path.resolve('uploads', book.fileName);
+    const filePath = path.resolve("uploads", book.fileName);
 
     if (!fs.existsSync(filePath)) {
-      return res.status(404).send('File not found');
+      return res.status(404).send("File not found");
     }
 
     res.download(filePath, book.fileName);
@@ -124,18 +124,18 @@ export const deleteBook = async (req, res) => {
     const book = await Book.findById(id);
 
     if (!book) {
-      return res.status(404).send('Book not found');
+      return res.status(404).send("Book not found");
     }
 
     if (book.fileName) {
-      const filePath = path.resolve('uploads', book.fileName);
+      const filePath = path.resolve("uploads", book.fileName);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
     }
 
     await Book.findByIdAndDelete(id);
-    res.send('ok');
+    res.send("ok");
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

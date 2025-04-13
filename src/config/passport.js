@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import User from "../models/User.js";
+import User from "../models/User.ts";
 import bcrypt from "bcrypt";
 
 const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";

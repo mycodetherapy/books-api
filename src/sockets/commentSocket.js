@@ -1,5 +1,5 @@
-import Book from "../models/Book.js";
-import Comment from "../models/Comment.js";
+import Book from "../models/Book.ts";
+import Comment from "../models/Comment.ts";
 import { getIO } from "./socket.js";
 
 const setupCommentSocket = () => {
@@ -8,11 +8,10 @@ const setupCommentSocket = () => {
   io.on("connection", (socket) => {
     console.log("a user connected");
     const { bookId } = socket.handshake.query;
-    socket.join(bookId);
 
+    socket.join(bookId);
     socket.on("newComment", async (data) => {
       const { text, userId } = data;
-
       try {
         const newComment = new Comment({ text, bookId, userId });
         await newComment.save();

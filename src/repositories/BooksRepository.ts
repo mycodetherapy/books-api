@@ -1,4 +1,4 @@
-import { IBook } from "../interfaces/IBook";
+import { IBook } from "../interfaces/IBook.js";
 
 export abstract class BooksRepository {
   abstract createBook(book: IBook): Promise<void>;

@@ -1,4 +1,5 @@
 import express from "express";
+import "reflect-metadata";
 import http from "http";
 import fs from "fs";
 import path from "path";

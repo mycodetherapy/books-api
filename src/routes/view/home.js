@@ -1,5 +1,5 @@
 import express from "express";
-import Book from "../../models/Book.js"; // Импортируйте модель Book
+import Book from "../../models/Book.ts"; // Импортируйте модель Book
 
 const router = express.Router();
 

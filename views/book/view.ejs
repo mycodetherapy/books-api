@@ -10,8 +10,8 @@
        id="favorite"
        name="favorite"
        class="form-check-input"
-       <%= book.favorites.includes(user.id) ? "checked" : "" %>
-       onchange="toggleFavorite('<%= book.id %>')"
+        <%= book.favorites.some(fav => fav._id.equals(user._id)) ? "checked" : "" %>
+       onchange="toggleFavorite('<%= book._id %>')"
      />
      <label for="favorite" class="form-check-label">Add to favorites</label>
    </div>
@@ -28,10 +28,10 @@
     <% } %>
     <p><strong>Views:</strong> <%= views %></p>
     <div class="button-container">
-        <% if (user && book.userId.toString() === user.id) { %>
-        <a href="/books/update/<%= book.id %>" class="btn btn-warning">Edit</a>
+        <% if (user && book.userId._id.toString() === user.id) { %>
+        <a href="/books/update/<%= book._id %>" class="btn btn-warning">Edit</a>
         <form
-            action="/books/delete/<%= book.id %>"
+            action="/books/delete/<%= book._id %>"
             method="POST"
             style="display: inline"
         >
@@ -88,7 +88,7 @@
 
         <% if (commentsTotalPages > 1) { %>
           <%- include('../partials/pagination', {
-            baseUrl: `/books/${book.id}`,
+            baseUrl: `/books/${book._id}`,
             currentPage: commentsPage,
             totalPages: commentsTotalPages,
             limit: commentsLimit,
@@ -110,7 +110,7 @@
 
    <script src="/socket.io/socket.io.js"></script>
    <script>
-       const socket = io("/", { query: { bookId: "<%= book.id %>" } });
+       const socket = io("/", { query: { bookId: "<%= book._id %>" } });
 
        const boxList = document.querySelector("#list");
        const sendComment = document.querySelector("#send-comment");
@@ -154,6 +154,7 @@
        });
 
        sendComment.addEventListener("click", () => {
+
            socket.emit("newComment", {
                text: inputText.value,
                userId: "<%= user.id %>",
@@ -197,13 +198,13 @@
 
        favoriteCheckbox.addEventListener("change", () => {
            socket.emit("toggleFavorite", {
-               bookId: "<%= book.id %>",
-               userId: "<%= user.id %>",
+               bookId: "<%= book._id %>" || null,
+               userId: "<%= user.id %>" || null,
            });
        });
 
        socket.on("favoriteUpdated", ({ bookId, favorites }) => {
-           if (bookId === "<%= book.id %>") {
+           if (bookId === "<%= book._id %>") {
                favoritesCount.textContent = favorites;
            }
        });

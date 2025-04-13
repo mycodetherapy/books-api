@@ -1,13 +1,17 @@
 import express from "express";
 import { upload } from "../../middleware/upload.js";
-import Book from "../../models/Book.js";
-import Comment from "../../models/Comment.js";
+import Book from "../../models/Book.ts";
+import Comment from "../../models/Comment.ts";
 import path from "path";
 import fs from "fs";
 import { unlink } from "fs/promises";
 import { trimStrings } from "../../helpers.js";
 import axios from "axios";
 import { isAuthenticated } from "../../middleware/auth.js";
+import { container } from "../../container.js";
+import { BooksRepository } from "../../repositories/BooksRepository.js";
+import { CommentsRepository } from "../../repositories/CommentsRepository.js";
+import { FavoritesRepository } from "../../repositories/FavoritesRepository.js";
 
 const router = express.Router();
 
@@ -111,18 +115,8 @@ router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     const { page = 1, limit = 20 } = req.query;
 
-    const book = await Book.findById(req.params.id).populate({
-      path: "comments",
-      populate: {
-        path: "userId",
-        select: "username",
-      },
-      options: {
-        skip: (page - 1) * limit,
-        limit: parseInt(limit),
-        sort: { createdAt: -1 },
-      },
-    });
+    const booksRepository = container.get(BooksRepository);
+    const book = await booksRepository.getBook(req.params.id);
 
     if (!book) {
       return res.render("errors/404");

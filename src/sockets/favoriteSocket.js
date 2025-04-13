@@ -1,4 +1,4 @@
-import Book from "../models/Book.js";
+import Book from "../models/Book.ts";
 import { getIO } from "./socket.js";
 
 const setupFavoriteSocket = () => {
