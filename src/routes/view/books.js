@@ -115,10 +115,9 @@ router.get("/:id", async (req, res, next) => {
     const { page = 1, limit = 20 } = req.query;
 
     // const booksRepository = container.get(BooksRepository);
-    // const book = await booksRepository.getBook(req.params.id);
 
     const booksRepository = container.get(BooksRepositoryImpl);
-    const book = await booksRepository.getBook(req.params.id);
+    const book = await booksRepository.getBook(id);
 
     if (!book) {
       return res.render("errors/404");

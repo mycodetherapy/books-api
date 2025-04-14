@@ -2,6 +2,9 @@ import Book from "../models/Book.ts";
 import path from "path";
 import fs from "fs";
 import axios from "axios";
+import { container } from "../container.js";
+
+import { BooksRepositoryImpl } from "../repositories/BooksRepositoryImpl.js";
 
 // const COUNTER_SERVICE_URL = process.env.COUNTER_SERVICE_URL || "http://localhost:4000";
 const COUNTER_SERVICE_URL =
@@ -19,7 +22,8 @@ export const getAllBooks = async (req, res) => {
 export const getBookById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const book = await Book.findById(id);
+    const booksRepository = container.get(BooksRepositoryImpl);
+    const book = await booksRepository.getBook(id);
 
     if (!book) {
       return res.status(404).json({ error: "Book not found" });
