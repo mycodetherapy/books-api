@@ -7,7 +7,7 @@ const setupFavoriteSocket = () => {
     console.log("a user connected");
 
     socket.on("toggleFavorite", async (data) => {
-      const { bookId, userId } = data;
+      const { bookId, user } = data;
 
       try {
         const book = await Book.findById(bookId);
@@ -17,10 +17,10 @@ const setupFavoriteSocket = () => {
           });
         }
 
-        const userIndex = book.favorites.indexOf(userId);
+        const userIndex = book.favorites.indexOf(user);
 
         if (userIndex === -1) {
-          book.favorites.push(userId);
+          book.favorites.push(user);
         } else {
           book.favorites.splice(userIndex, 1);
         }

@@ -14,16 +14,21 @@ export class BooksRepositoryImpl extends BooksRepository {
       .populate({
         path: "comments",
         populate: {
-          path: "userId",
+          path: "user",
           select: "username",
         },
       })
-      .populate("userId", "username")
+      .populate("user", "username")
       .populate("favorites", "username");
   }
 
-  async getBooks(): Promise<IBook[]> {
-    return Book.find().lean().exec();
+  async getBooks(
+    query: Record<string, any> = {},
+    sort: Record<string, 1 | -1> = {},
+    skip = 0,
+    limit = 20,
+  ): Promise<IBook[]> {
+    return Book.find(query).sort(sort).skip(skip).limit(limit).lean().exec();
   }
 
   async updateBook(id: string, updatedBook: Partial<IBook>): Promise<void> {

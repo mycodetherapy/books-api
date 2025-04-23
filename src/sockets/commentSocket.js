@@ -11,9 +11,9 @@ const setupCommentSocket = () => {
 
     socket.join(bookId);
     socket.on("newComment", async (data) => {
-      const { text, userId } = data;
+      const { text, user } = data;
       try {
-        const newComment = new Comment({ text, bookId, userId });
+        const newComment = new Comment({ text, bookId, user });
         await newComment.save();
 
         await Book.findByIdAndUpdate(bookId, {
@@ -22,7 +22,7 @@ const setupCommentSocket = () => {
 
         const populatedComment = await Comment.findById(
           newComment._id,
-        ).populate("userId", "username");
+        ).populate("user", "username");
 
         io.to(bookId).emit("newComment", populatedComment);
       } catch (err) {
@@ -31,11 +31,11 @@ const setupCommentSocket = () => {
     });
 
     socket.on("deleteComment", async (data) => {
-      const { commentId, userId } = data;
+      const { commentId, user } = data;
 
       try {
         const comment = await Comment.findById(commentId);
-        if (!comment || comment.userId.toString() !== userId) {
+        if (!comment || comment.user.toString() !== user) {
           return socket.emit("deleteCommentError", {
             message: "You can only delete your own comments",
           });
@@ -57,11 +57,11 @@ const setupCommentSocket = () => {
     });
 
     socket.on("updateComment", async (data) => {
-      const { commentId, text, userId } = data;
+      const { commentId, text, user } = data;
 
       try {
         const comment = await Comment.findById(commentId);
-        if (!comment || comment.userId.toString() !== userId) {
+        if (!comment || comment.user.toString() !== user) {
           return socket.emit("updateCommentError", {
             message: "You can only edit your own comments",
           });

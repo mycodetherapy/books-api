@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 import {
   createBook,
   deleteBook,
@@ -6,16 +6,16 @@ import {
   getAllBooks,
   getBookById,
   updateBook,
-} from '../../controllers/booksController.js';
-import { upload } from '../../middleware/upload.js';
+} from "../../controllers/booksController.js";
+import { upload } from "../../middleware/upload.ts";
 
 const router = express.Router();
 
-router.get('/', getAllBooks);
-router.get('/:id', getBookById);
-router.post('/', upload.single('fileBook'), createBook);
-router.put('/:id', upload.single('fileBook'), updateBook);
-router.delete('/:id', deleteBook);
-router.get('/:id/download', downloadBook);
+router.get("/", getAllBooks);
+router.get("/:id", getBookById);
+router.post("/", upload.single("fileBook"), createBook);
+router.put("/:id", upload.single("fileBook"), updateBook);
+router.delete("/:id", deleteBook);
+router.get("/:id/download", downloadBook);
 
 export default router;

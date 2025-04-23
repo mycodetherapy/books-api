@@ -33,7 +33,7 @@
   <ul class="list-group">
     <% books.forEach(book => { %>
     <li class="list-group-item one-row" >
-      <a href="/books/<%= book.id %>"><%= book.title %></a>
+      <a href="/books/<%= book._id %>"><%= book.title %></a>
     </li>
     <% }) %>
   </ul>

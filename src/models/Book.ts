@@ -10,7 +10,7 @@ const bookSchema = new mongoose.Schema(
     fileName: { type: String, default: "" },
     filePath: { type: String, default: "" },
     views: { type: Number, default: 0 },
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

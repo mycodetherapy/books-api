@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 export interface IBook {
+  _id?: Types.ObjectId;
   title: string;
   description?: string;
   authors: string;
@@ -9,7 +10,7 @@ export interface IBook {
   fileName: string;
   filePath: string;
   views?: number;
-  userId: Types.ObjectId;
+  user: Types.ObjectId;
   comments?: Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
