@@ -4,6 +4,13 @@ import bcrypt from "bcrypt";
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  email: { type: String },
+  firstName: { type: String },
+  lastName: { type: String },
+  avatar: { type: String },
+  role: { type: String },
+  createdAt: { type: Date },
+  updatedAt: { type: Date },
 });
 
 userSchema.pre("save", async function (next) {

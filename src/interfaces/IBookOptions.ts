@@ -1,22 +1,19 @@
 import { IBook } from "./IBook.js";
-import { Types } from "mongoose";
 import { IUser } from "./IUser.js";
-import { Request } from "express";
 
-export interface IBookQuery {
+export interface IBookOptions {
   search?: string;
-  author?: string;
+  author?: IBook["authors"];
   sort?: string;
   page?: number;
   limit?: number;
 }
 
-// interfaces/IFieldLabels.ts
 export interface IFieldLabels {
-  title: string;
-  authors: string;
-  description: string;
-  fileName: string;
+  title: IBook["title"];
+  authors: IBook["authors"];
+  description: NonNullable<IBook["description"]>;
+  fileName: IBook["fileName"];
 }
 
 export interface IIndexRenderOptions {
@@ -28,9 +25,9 @@ export interface IIndexRenderOptions {
   currentPage: number;
   totalPages: number;
   limit: number;
-  search?: string;
-  author?: string;
-  sort?: string;
+  search?: IBookOptions["search"];
+  author?: IBookOptions["author"];
+  sort?: IBookOptions["sort"];
 }
 
 export interface ICreateRenderOptions {
@@ -50,34 +47,11 @@ export interface IUpdateRenderOptions {
 export interface IViewRenderOptions {
   title: string;
   book: IBook;
-  views?: number;
+  views?: IBook["views"];
   message?: string;
   user: IUser;
   currentPath: string;
   commentsPage: number;
   commentsLimit: number;
   commentsTotalPages: number;
-}
-
-export interface IMulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-  destination: string;
-  filename: string;
-  path: string;
-  buffer?: Buffer;
-}
-
-export interface IRequestWithFile extends Request {
-  file?: IMulterFile;
-  files?: {
-    [fieldname: string]: IMulterFile[];
-  };
-}
-
-export interface IRequestWithUser extends Request {
-  user?: IUser;
 }

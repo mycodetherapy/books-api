@@ -8,21 +8,20 @@ import { Request, Response, NextFunction } from "express";
 import { isAuthenticated } from "../../middleware/auth.js";
 import { container } from "../../container.js";
 import {
-  IBookQuery,
-  IRequestWithFile,
-  IRequestWithUser,
+  IBookOptions,
   IViewRenderOptions,
-} from "../../interfaces/IBookQuery.js";
+  IUpdateRenderOptions,
+  ICreateRenderOptions,
+  IIndexRenderOptions,
+  IFieldLabels,
+} from "../../interfaces/IBookOptions.js";
 import { BooksRepository } from "../../repositories/BooksRepository.js";
 import { IBook } from "../../interfaces/IBook.js";
-import { IUpdateRenderOptions } from "../../interfaces/IBookQuery.js";
 import { Types } from "mongoose";
-import { ICreateRenderOptions } from "../../interfaces/IBookQuery.js";
-import { IFieldLabels } from "../../interfaces/IBookQuery.js";
-import { IIndexRenderOptions } from "../../interfaces/IBookQuery.js";
 import { IUser } from "../../interfaces/IUser.js";
 import { promisify } from "node:util";
 import { upload } from "../../middleware/upload.js";
+import { trimStrings } from "../../helpers.js";
 
 const router = express.Router();
 
@@ -33,16 +32,6 @@ const COUNTER_SERVICE_URL =
 router.use(isAuthenticated);
 
 const unlink = promisify(fs.unlink);
-
-// Helper function to trim strings in request body
-const trimStrings = (obj: Record<string, any>): Record<string, any> => {
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [
-      key,
-      typeof value === "string" ? value.trim() : value,
-    ]),
-  );
-};
 
 export const getBooks = async (
   req: Request,
@@ -56,7 +45,7 @@ export const getBooks = async (
       sort,
       page = 1,
       limit = 20,
-    } = req.query as unknown as IBookQuery;
+    } = req.query as unknown as IBookOptions;
     const query: Record<string, any> = {};
 
     if (search) {
@@ -133,7 +122,7 @@ export const getCreateBook = (
 };
 
 export const postCreateBook = async (
-  req: any, //IRequestWithFile & IRequestWithUser,
+  req: any,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
@@ -141,6 +130,8 @@ export const postCreateBook = async (
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
     const fileName = req.file ? req.file.filename : null;
     const { title, description, authors, fileCover } = trimStrings(req.body);
+
+    console.log("req?.user", req.user);
 
     const newBook: IBook = {
       title,
@@ -240,7 +231,7 @@ export const postUpdateBook = async (
 };
 
 export const getBook = async (
-  req: any, //IRequestWithUser,
+  req: any,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
