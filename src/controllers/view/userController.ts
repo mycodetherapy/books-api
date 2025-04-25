@@ -1,26 +1,26 @@
-import User from "../../models/User.ts";
+import { Request, Response, NextFunction } from "express";
 
-import express from "express";
 import passport from "passport";
+import User from "../../models/User.js";
 
-const router = express.Router();
-
-router.get("/login", (req, res) => {
+export const getLogin = (req: Request, res: Response): void => {
   res.render("user/login", { title: "Login", user: req.user });
+};
+
+export const postLogin = passport.authenticate("local", {
+  successRedirect: "/books",
+  failureRedirect: "/user/login",
 });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/books",
-    failureRedirect: "/user/login",
-  }),
-);
-
-router.get("/signup", (req, res, next) => {
+export const getSignup = (req: Request, res: Response): void => {
   res.render("user/signup", { title: "Signup", user: req.user });
-});
-router.post("/signup", async (req, res, next) => {
+};
+
+export const postSignup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { username, password } = req.body;
 
@@ -36,27 +36,25 @@ router.post("/signup", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
-router.get("/me", (req, res) => {
-  console.log("req.path", req.path);
+export const getProfile = (req: Request, res: Response): void => {
   if (!req.isAuthenticated()) {
     return res.redirect("/user/login");
   }
+
   res.render("user/profile", {
     title: "Profile",
     user: req.user,
     currentPath: req.path,
   });
-});
+};
 
-router.post("/logout", (req, res) => {
+export const postLogout = (req: Request, res: Response): void => {
   req.logout((err) => {
     if (err) {
       return res.render("errors/500");
     }
     res.redirect("/");
   });
-});
-
-export default router;
+};

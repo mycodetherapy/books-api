@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types, Model } from "mongoose";
 
 export interface IUser {
   _id: Types.ObjectId;
@@ -12,3 +12,9 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IUserDocument extends IUser, Document {
+  comparePassword(candidatePassword: string): Promise<boolean>;
+}
+
+export interface IUserModel extends Model<IUserDocument> {}
