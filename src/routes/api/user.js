@@ -4,7 +4,7 @@ import {
   login,
   getProfile,
   deleteUser,
-} from "../../controllers/userController.js";
+} from "../../controllers/api/userController.js";
 import passport from "passport";
 
 const router = express.Router();

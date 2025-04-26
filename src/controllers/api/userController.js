@@ -1,4 +1,4 @@
-import User from "../models/User.ts";
+import User from "../../models/User.ts";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import passport from "passport";
@@ -48,9 +48,6 @@ export const getProfile = (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log("id", id);
-    console.log("req.user._id", req.user._id);
 
     if (req.user.role !== "admin" && req.user._id.toString() !== id) {
       return res.status(403).json({ error: "Access denied" });
