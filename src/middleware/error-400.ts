@@ -1,4 +1,4 @@
-export const badRequest = (err, req, res, next) => {
+export const badRequest = (err: any, req: any, res: any, next: any) => {
   if (err.status === 400) {
     if (req.accepts("json")) {
       return res.status(400).json({ error: err.message });

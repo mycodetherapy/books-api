@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-const logFilePath = path.resolve('logs', 'requests.log');
+const logFilePath = path.resolve("logs", "requests.log");
 
 if (!fs.existsSync(path.dirname(logFilePath))) {
   fs.mkdirSync(path.dirname(logFilePath));
 }
-export const logger = (req, res, next) => {
+export const logger = (req: any, res: any, next: any) => {
   const logData = {
     time: new Date().toISOString(),
     method: req.method,
@@ -16,7 +16,7 @@ export const logger = (req, res, next) => {
 
   const logEntry = `${logData.time} - ${logData.method} ${logData.url} - ${logData.ip}\n`;
 
-  fs.appendFileSync(logFilePath, logEntry, 'utf8');
+  fs.appendFileSync(logFilePath, logEntry, "utf8");
 
   next();
 };

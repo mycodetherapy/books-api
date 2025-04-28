@@ -128,8 +128,6 @@ export const postCreateBook = async (
     const fileName = req.file ? req.file.filename : null;
     const { title, description, authors, fileCover } = trimStrings(req.body);
 
-    console.log("req?.user", req.user);
-
     const newBook: IBook = {
       title,
       description,
@@ -180,7 +178,7 @@ export const getUpdateBook = async (
 };
 
 export const postUpdateBook = async (
-  req: any, //IRequestWithFile & IRequestWithUser,
+  req: any,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
@@ -238,8 +236,6 @@ export const getBook = async (
 
     const booksRepository = container.get(BooksRepository);
     const book = await booksRepository.getBook(id);
-
-    console.log("book", book);
 
     if (!book) {
       return res.render("errors/404");
