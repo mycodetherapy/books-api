@@ -13,4 +13,12 @@ export class UserRepositoryImpl extends UserRepository {
     const newUser = new User(user);
     return newUser.save();
   }
+
+  async deleteUserById(id: string): Promise<IUser | null> {
+    return User.findByIdAndDelete(id);
+  }
+
+  async findById(id: string): Promise<IUser | null> {
+    return User.findById(id);
+  }
 }
