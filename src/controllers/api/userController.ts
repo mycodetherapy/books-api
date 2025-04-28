@@ -1,10 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import bcrypt from "bcrypt";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import passport from "passport";
 import { container } from "../../container.js";
 import { UserRepository } from "../../repositories/UserRepository.js";
-import User from "../../models/User.js";
 
 const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
 
@@ -24,13 +22,15 @@ export const signup = async (
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword });
-    const newUser = await userRepository.createUser(user);
+    const newUser = await userRepository.createUser({
+      username,
+      password,
+    });
 
-    res
-      .status(201)
-      .json({ message: "User registered successfully", userId: newUser._id });
+    res.status(201).json({
+      message: "User registered successfully",
+      userId: newUser._id,
+    });
   } catch (error: any) {
     next(error);
   }
@@ -61,6 +61,10 @@ export const login = (
 
 export const getProfile = (req: Request, res: Response): void => {
   res.json(req.user);
+};
+
+export const logout = (req: Request, res: Response): void => {
+  res.status(200).json({ message: "Logout successful" });
 };
 
 export const deleteUser = async (
